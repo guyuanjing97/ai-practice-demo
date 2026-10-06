@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8" />
 <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-<title>小鹅通 AI陪练自由模式 Demo V35</title>
+<title>小鹅通 AI陪练自由模式 Demo V45</title>
 <style>
 *{box-sizing:border-box}
 :root{
@@ -66,6 +66,25 @@ button,input,textarea,select{font:inherit}button{cursor:pointer}
 .keyword-box{min-height:40px;border:1px solid #d8dee7;border-radius:5px;padding:6px;display:flex;gap:6px;align-items:center;flex-wrap:wrap;background:#fff}
 .keyword-chip{display:inline-flex;align-items:center;gap:5px;background:#eaf3ff;color:#2f7df6;border-radius:4px;padding:4px 7px;font-size:12px}
 .keyword-chip button{border:0;background:transparent;color:#2f7df6;padding:0;font-size:13px}.keyword-box input{border:0;outline:none;min-width:140px;flex:1;padding:4px}
+
+/* 问答话术：对齐现有陪练模板交互 */
+.qa-section{padding-bottom:20px}
+.qa-head{justify-content:flex-end;margin-bottom:14px;min-height:34px}
+.qa-head .qa-title{margin-right:auto}
+.qa-lib-btn{padding:7px 13px;white-space:nowrap}
+.qa-row{display:grid;grid-template-columns:72px minmax(0,1fr);column-gap:12px;align-items:start;margin-bottom:20px}
+.qa-row .qa-label{margin:0;text-align:right;padding-top:9px;font-weight:400;color:#3f4650;white-space:nowrap}
+.qa-control{min-width:0;position:relative}
+.qa-textarea{min-height:120px;padding:10px 12px 26px;line-height:1.55;resize:none}
+.qa-row.answer-row .qa-textarea{min-height:176px}
+.qa-count{position:absolute;right:8px;bottom:7px;color:#b5bac2;font-size:12px;pointer-events:none}
+.qa-row .keyword-box{min-height:40px;padding:5px 7px}
+.qa-number-wrap{display:flex;align-items:flex-start;flex-direction:column}
+.qa-number-input{width:235px;height:40px}
+.qa-branch-help{max-width:390px;margin-top:7px;color:#a3a9b1;line-height:1.8;font-size:12px}
+.qa-row .field-error{grid-column:2;margin-top:5px}
+.qa-row.invalid .textarea,.qa-row.invalid .input{border-color:#f53f3f!important;box-shadow:0 0 0 1px rgba(245,63,63,.04)}
+@media(max-width:1180px){.editor{grid-template-columns:minmax(680px,1fr) 500px}.qa-row{grid-template-columns:68px minmax(0,1fr)}}
 .inline{display:flex;gap:10px;align-items:center;flex-wrap:wrap}.num{width:120px}
 .radio-group{display:flex;gap:26px;align-items:center;padding:4px 0}.radio-item{display:inline-flex;align-items:center;gap:7px;cursor:pointer}.radio-item input{width:16px;height:16px;accent-color:var(--blue)}
 .free-section .radio-item input{accent-color:var(--purple)}
@@ -148,11 +167,12 @@ button,input,textarea,select{font:inherit}button{cursor:pointer}
 .pl-score-rule{line-height:1.65;color:#3e4653}.pl-score-rule .small{color:#8a94a0;font-size:12px}
 .pl-score-w{width:68px;height:30px;border:1px solid #d8dce3;border-radius:4px;padding:0 7px;text-align:right}
 .pl-goals{margin-top:10px;border:1px solid #e5e8ed;border-radius:5px;overflow:hidden;background:#fff}
-.pl-goal-head,.pl-goal-row{display:grid;grid-template-columns:46px minmax(0,1fr) 108px;align-items:center}
+.pl-goal-head,.pl-goal-row{display:grid;grid-template-columns:46px minmax(0,1fr) 108px 64px;align-items:center}
 .pl-goal-head{background:#f7f8fa;color:#646a73;font-size:12px}.pl-goal-head>div,.pl-goal-row>div{padding:8px 9px}
 .pl-goal-row{border-top:1px solid #edf0f3}.pl-goal-name{font-weight:500}.pl-goal-sub{color:#8a94a0;font-size:12px;margin-top:2px}
 .pl-goal-w{width:62px;height:28px;border:1px solid #d8dce3;border-radius:4px;text-align:right;padding:0 6px}
 .pl-goal-tools{display:flex;align-items:center;gap:8px;margin-top:9px}.pl-goal-tools .sum{margin-left:auto;font-weight:600}.pl-goal-tools .ok{color:#00a870}.pl-goal-tools .bad{color:#f53f3f}
+.pl-goal-remove{border:0;background:transparent;color:#1677ff;cursor:pointer;padding:4px 6px;font-size:13px}.pl-goal-remove:hover{color:#f53f3f}.pl-goal-empty{padding:18px;text-align:center;color:#8a94a0;border-top:1px solid #edf0f3}
 .pl-info{margin-top:9px;background:#f5f9ff;border:1px solid #d7e7ff;color:#5b6f8e;border-radius:4px;padding:8px 10px;font-size:12px;line-height:1.55}
 .pl-bottom-lines{margin-left:124px;margin-top:18px}
 .pl-mini{display:grid;grid-template-columns:100px 1fr;align-items:center;margin:14px 0}
@@ -247,7 +267,7 @@ button,input,textarea,select{font:inherit}button{cursor:pointer}
 .c2-status{height:28px;background:#fff;padding:7px 17px 0;display:flex;justify-content:space-between;font-size:12px;font-weight:600;flex:none}
 .c2-head{height:48px;background:#fff;border-bottom:1px solid #edf0f3;padding:0 14px;display:flex;align-items:center;justify-content:space-between;flex:none}
 .c2-head button{border:0;background:transparent}.c2-mode{font-size:12px;color:#4d72bf;background:#eef4ff;padding:4px 9px;border-radius:12px}
-.c2-scroll{flex:1;overflow:auto;min-height:0;background:#f7f8fb;scroll-behavior:smooth}
+.c2-scroll{flex:1;overflow:auto;min-height:0;background:#f7f8fb;scroll-behavior:auto}
 .c2-detail-hero{height:155px;background:linear-gradient(180deg,#eaf3ff,#f0eaff);position:relative}
 .c2-avatar{width:106px;height:106px;border-radius:50%;background:linear-gradient(145deg,#c4d8ff,#e5ddff);position:absolute;left:50%;top:26px;transform:translateX(-50%);display:grid;place-items:center;font-size:52px}
 .c2-detail-card{background:#fff;border-radius:20px 20px 0 0;margin-top:-8px;padding:22px 18px;min-height:360px}
@@ -387,6 +407,33 @@ button,input,textarea,select{font:inherit}button{cursor:pointer}
 
 /* V34：最大轮次未完成恢复弹窗 */
 .c2-fail-modal p{margin:0 0 8px}
+
+/* V37：目标配置精简 + 评分区按现有完成标准样式调整 */
+.pl-rule-tagbox{min-height:56px;border:1px solid #d8dee7;border-radius:4px;padding:8px 10px;display:flex;align-items:flex-start;align-content:flex-start;gap:6px;flex-wrap:wrap;background:#fff;max-width:540px}
+.pl-rule-chip{display:inline-flex;align-items:center;gap:4px;background:#eaf3ff;color:#2f7df6;border-radius:2px;padding:3px 7px;font-size:12px;line-height:18px}
+.pl-rule-chip button{border:0;background:transparent;color:#2f7df6;padding:0;cursor:pointer;font-size:13px;line-height:1}
+.pl-rule-tagbox input{border:0;outline:0;min-width:200px;flex:1;padding:4px 0;color:#4e5969}
+.pl-completion-wrap{display:flex;flex-direction:column;gap:12px}
+.pl-completion-line{display:flex;align-items:center;gap:8px;color:#4e5969}
+.pl-completion-line input[type=checkbox]{width:16px;height:16px;accent-color:#1769ff}
+.pl-completion-num{width:92px;height:34px;border:1px solid #d8dce3;border-radius:4px;padding:0 10px;background:#fff;color:#4e5969}
+.pl-completion-num:disabled{background:#f4f5f7;color:#aeb4bd;border-color:#e0e3e8}
+.pl-bottom-lines .pl-mini{align-items:flex-start}
+.pl-bottom-lines .pl-mini>div:first-child{padding-top:7px}
+
+/* V37：基于 v36_combined 增量调整——精简目标配置、评分报告不展示目标明细、计划评分区对齐现状交互 */
+.flow-section{margin-top:14px;padding-top:14px;border-top:1px solid #e9e5ff}
+.flow-section-title{font-weight:700;color:#654bd6;margin-bottom:12px}
+.flow-rule{background:#f6f8fb;border:1px solid #e4e9ef;border-radius:6px;padding:10px 12px;color:#606b78;line-height:1.65}
+.score-fixed-rule{line-height:1.75;color:#3e4653}
+.score-fixed-rule .formula{font-weight:600;color:#2f3742}
+.fixed-dim-tag{display:inline-flex;align-items:center;margin-left:7px;padding:1px 7px;border-radius:10px;background:#eef4ff;color:#1769ff;font-size:11px;font-weight:500}
+.mode-restrict{display:inline-flex;align-items:center;gap:6px;margin-left:8px;padding:4px 9px;border-radius:14px;background:#eef4ff;color:#1769ff;font-size:12px;font-weight:600}
+.c2-goal-result-icon{width:46px;height:46px;border-radius:50%;display:grid;place-items:center;margin:0 auto 12px;font-size:24px;font-weight:700}
+.c2-goal-result-icon.success{background:#eaf8f0;color:#00a870}
+.c2-goal-result-icon.incomplete{background:#fff2f0;color:#f53f3f}
+.c2-result-sub{font-size:12px;color:#8b94a0;text-align:center;margin:-6px 0 12px}
+
 /* C端 */
 .c-wrap{display:none;min-height:calc(100vh - 54px);padding:24px;gap:28px;justify-content:center;align-items:flex-start}
 .phone{width:390px;height:780px;background:#111;border-radius:34px;padding:10px;box-shadow:0 18px 48px rgba(30,40,55,.24)}
@@ -416,11 +463,26 @@ button,input,textarea,select{font:inherit}button{cursor:pointer}
 .c-side h3{margin:0 0 12px}.c-side p{color:#65707e;line-height:1.7}.demo-box{border:1px solid #e3e8ef;border-radius:8px;padding:12px;margin-top:12px}
 .demo-box b{display:block;margin-bottom:8px}.demo-box button{width:100%;margin-top:8px}
 @media(max-width:1100px){.sidebar{display:none}.editor{grid-template-columns:1fr 440px}.main{padding:12px}.c-side{display:none}}
+
+
+/* V49：陪练计划分享直达 C 端；C 端展示计划配置；目标结果反馈无默认文案 */
+.c2-plan-info{display:grid;grid-template-columns:82px 1fr;gap:12px;padding:8px 0;border-bottom:1px solid #f0f2f5;font-size:13px;line-height:1.5}
+.c2-plan-info:last-child{border-bottom:none}
+.c2-plan-info span{color:#8a94a3}.c2-plan-info em{font-style:normal;color:#303846;text-align:right;word-break:break-word}
+/* V47：C端右上角「目标」恢复现网原始形态，仅展示计划完成标准 */
+/* V48：修复C端每轮对话重渲染时的上下跳动；考核按钮文案调整 */
+.original-goal-modal{padding:0!important;overflow:hidden!important;max-height:none!important;border-radius:18px!important}
+.original-goal-modal h3{margin:0!important;padding:28px 22px 14px!important;font-size:20px!important}
+.original-standard{padding:0 28px 28px!important;font-size:16px!important;line-height:1.65!important;color:#777!important;text-align:center!important}
+.original-goal-close{width:100%;height:58px;border:0;border-top:1px solid #edf0f3;background:#fff;color:#1677ff;font-size:17px;font-weight:500;cursor:pointer}
+
+/* V50：补齐现网话术库 / AI角色库，并联动陪练角色 */
+.lib-page{display:none;background:#fff;min-height:700px;padding:0 18px 28px}.lib-page.active{display:block}.lib-tabs{display:flex;gap:28px;border-bottom:1px solid #edf0f3;height:52px;align-items:end}.lib-tabs .tab{padding:0 4px 14px;cursor:pointer;color:#4b5563}.lib-tabs .tab.active{color:#1677ff;border-bottom:2px solid #1677ff}.role-toolbar,.speech-toolbar{display:flex;align-items:center;gap:10px;padding:22px 0}.role-grid{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:14px}.role-card{border:1px solid #e3e8ef;border-radius:6px;padding:14px;min-height:118px;position:relative;background:#fff}.role-card-head{display:flex;gap:12px;align-items:center}.role-avatar{width:58px;height:58px;border-radius:4px;background:linear-gradient(145deg,#eaf1ff,#f7e7e1);display:flex;align-items:center;justify-content:center;font-size:30px}.role-name{font-weight:600}.role-age{color:#8a94a3;font-size:12px;margin-left:6px}.role-actions{position:absolute;right:12px;top:12px;color:#1677ff;font-size:12px}.role-tagline{margin:10px 0 6px;background:#eafaf7;color:#32a58b;padding:4px 8px;border-radius:2px;font-size:12px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}.role-desc{color:#677281;font-size:12px;line-height:1.6;display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden}.speech-layout{display:grid;grid-template-columns:230px 1fr;min-height:650px}.speech-side{border-right:1px solid #edf0f3;padding:18px 14px 0 0}.speech-side-head{display:flex;justify-content:space-between;align-items:center;margin-bottom:14px}.speech-lib-list{display:flex;flex-direction:column;gap:3px;margin-top:10px}.speech-lib-item{padding:9px 10px;border-radius:4px;cursor:pointer;font-size:13px}.speech-lib-item.active{background:#edf4ff;color:#1677ff}.speech-main{padding:18px}.speech-notice{border:1px solid #91caff;background:#e6f4ff;color:#49657f;padding:9px 12px;border-radius:2px;font-size:12px}.speech-search{margin-left:auto;width:220px}.speech-actions{color:#1677ff;white-space:nowrap}.role-select-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:10px;max-height:420px;overflow:auto}.role-select-card{border:1px solid #dce2ea;border-radius:6px;padding:10px;cursor:pointer}.role-select-card.selected{border-color:#1677ff;box-shadow:0 0 0 1px #1677ff inset}.role-select-card .mini{display:flex;gap:8px;align-items:center}.role-select-card .mini .role-avatar{width:42px;height:42px;font-size:22px}.selected-role-pill{display:inline-flex;align-items:center;gap:10px;border:1px solid #dce2ea;border-radius:6px;padding:9px 12px}.selected-role-pill .role-avatar{width:38px;height:38px;font-size:20px}.lib-drawer-mask{position:fixed;inset:0;background:#0006;z-index:120;display:none}.lib-drawer-mask.show{display:block}.lib-drawer{position:absolute;right:0;top:0;bottom:0;width:620px;background:#fff;box-shadow:-8px 0 25px #0002;display:flex;flex-direction:column}.lib-drawer-h{padding:18px 22px;border-bottom:1px solid #eee;font-weight:600;display:flex;justify-content:space-between}.lib-drawer-body{padding:22px;overflow:auto;flex:1}.lib-field{display:grid;grid-template-columns:90px 1fr;gap:12px;margin-bottom:18px;align-items:start}.lib-field label{font-size:13px;color:#4b5563}.lib-field input,.lib-field textarea,.lib-field select{width:100%;border:1px solid #d9dee7;border-radius:4px;padding:9px}.lib-field textarea{min-height:90px;resize:vertical}.lib-drawer-foot{padding:14px 22px;border-top:1px solid #eee;text-align:right}
 </style>
 </head>
 <body>
 <div class="topbar">
-  <div class="brand"><span class="logo">鹅</span>小鹅通企学院 · AI陪练自由模式 Demo V35</div>
+  <div class="brand"><span class="logo">鹅</span>小鹅通企学院 · AI陪练自由模式 Demo V45</div>
   <div class="top-switch">
     <button id="bTop" class="active" onclick="switchTop('b')">B端配置</button>
     <button id="cTop" onclick="switchTop('c')">C端体验</button>
@@ -433,7 +495,7 @@ button,input,textarea,select{font:inherit}button{cursor:pointer}
   </aside>
   <main class="main">
     <div id="listPanel" class="panel list-page">
-      <div class="tabs"><div class="tab" onclick="showPlanPanel()">陪练计划</div><div class="tab active">陪练模板</div><div class="tab">话术库</div><div class="tab">AI角色库</div></div>
+      <div class="tabs"><div class="tab" onclick="showPlanPanel()">陪练计划</div><div class="tab active">陪练模板</div><div class="tab" onclick="showSpeechLibraryPanel()">话术库</div><div class="tab" onclick="showRoleLibraryPanel()">AI角色库</div></div>
       <div class="list-toolbar"><button class="btn primary" onclick="openNewTemplatePage()">新建模板</button></div>
       <div class="list-table-wrap">
         <table class="xe-table">
@@ -450,8 +512,8 @@ button,input,textarea,select{font:inherit}button{cursor:pointer}
           <div class="pl-top-tabs">
             <div class="tab active">陪练计划</div>
             <div class="tab" onclick="showTemplatePanel()">陪练模板</div>
-            <div class="tab">话术库</div>
-            <div class="tab">AI角色库</div>
+            <div class="tab" onclick="showSpeechLibraryPanel()">话术库</div>
+            <div class="tab" onclick="showRoleLibraryPanel()">AI角色库</div>
           </div>
           <div class="list-toolbar"><button class="btn primary" onclick="openPlanCreate()">新建陪练计划</button></div>
           <div class="list-table-wrap">
@@ -488,7 +550,7 @@ button,input,textarea,select{font:inherit}button{cursor:pointer}
             <div class="pl-form-row"><div class="pl-form-label">点评模式</div><div class="pl-inline"><span id="plCreateCommentSwitch" class="pl-switch clickable" onclick="toggleCreateCommentMode()"></span><span id="plCreateCommentText" class="help">关闭　开启后，学员练习完成后可获得点评反馈；新建计划默认关闭。</span></div></div>
             <div class="pl-form-row"><div class="pl-form-label">陪练方式</div><div><label class="radio-item"><input type="radio" name="createPracticeMode" value="voice" checked>语音</label><label class="radio-item"><input type="radio" name="createPracticeMode" value="text">文字</label></div></div>
             <div class="pl-form-row"><div class="pl-form-label req">陪练模板</div><div id="plCreateTpl"><button class="btn outline" onclick="openPlanTemplateModal()">＋ 选择模板</button></div></div>
-            <div class="pl-form-row"><div class="pl-form-label req">陪练角色</div><div><button class="btn outline">＋ 选择角色</button></div></div>
+            <div class="pl-form-row"><div class="pl-form-label req">陪练角色</div><div id="plCreateRole"><button class="btn outline" onclick="openRoleSelectModal()">＋ 选择角色</button></div></div>
             <div class="pl-form-row"><div class="pl-form-label">学习资料</div><div><button class="btn outline">＋ 添加资料</button><span class="help" style="margin-left:8px">最多可上传100个文件。</span></div></div>
           </div>
 
@@ -496,9 +558,12 @@ button,input,textarea,select{font:inherit}button{cursor:pointer}
             <div class="pl-section-h">评价标准</div>
             <div class="pl-score-wrap"><table class="pl-score"><thead><tr><th class="dim">评分维度</th><th>评分规则</th><th class="wt">权重</th></tr></thead><tbody id="plCreateScoreBody"></tbody></table><div id="plCreateTotal" class="help" style="text-align:right;margin-top:7px"></div></div>
             <div class="pl-bottom-lines">
-              <div class="pl-mini"><div>扣分规则：</div><div>每出现一次违禁词，扣 <input class="pl-score-w" value="5" type="number"> 分</div></div>
-              <div class="pl-mini"><div>违禁词：</div><div><input class="pl-input" style="width:490px" placeholder="输入关键词后回车添加"></div></div>
-              <div class="pl-mini"><div>完成标准：</div><div><label class="check"><input id="plCreatePracticeCheck" type="checkbox" checked>练习次数 ≥ 1</label>　<label class="check"><input id="plCreateScoreCheck" type="checkbox" checked>评分 ≥ 60</label></div></div>
+              <div class="pl-mini"><div>扣分规则</div><div>每出现一次违禁词，扣 <input class="pl-score-w" value="5" type="number"> 分</div></div>
+              <div class="pl-mini"><div>违禁词</div><div><div id="plCreateForbiddenBox" class="pl-rule-tagbox"><span class="pl-rule-chip">随便看看吧<button onclick="removePlanForbiddenChip(this)">×</button></span><span class="pl-rule-chip">喝了保证降三高<button onclick="removePlanForbiddenChip(this)">×</button></span><span class="pl-rule-chip">别家的茶都是次品<button onclick="removePlanForbiddenChip(this)">×</button></span><span class="pl-rule-chip">能治胃病<button onclick="removePlanForbiddenChip(this)">×</button></span><span class="pl-rule-chip">网上卖的都是假货<button onclick="removePlanForbiddenChip(this)">×</button></span><input placeholder="输入关键词后回车添加" onkeydown="addPlanForbiddenWord(event,'plCreateForbiddenBox')"></div></div></div>
+              <div class="pl-mini"><div>完成标准</div><div class="pl-completion-wrap">
+                <label class="pl-completion-line"><input id="plCreatePracticeCheck" type="checkbox" checked onchange="toggleCompletionInput('plCreatePracticeCheck','plCreatePracticeNum')"><span>练习次数 ≥</span><input id="plCreatePracticeNum" class="pl-completion-num" type="number" min="1" value="1"></label>
+                <label class="pl-completion-line"><input id="plCreateScoreCheck" type="checkbox" onchange="toggleCompletionInput('plCreateScoreCheck','plCreateScoreNum')"><span>评分 ≥</span><input id="plCreateScoreNum" class="pl-completion-num" type="number" min="0" max="100" value="60" disabled></label>
+              </div></div>
             </div>
           </div>
           <div class="pl-create-footer"><button class="btn" onclick="showPlanList()">取消</button><button class="btn primary" onclick="saveCreatedPlan()">保存</button></div>
@@ -510,7 +575,7 @@ button,input,textarea,select{font:inherit}button{cursor:pointer}
         <div class="pl-summary">
           <div class="pl-cover">锅圈</div>
           <div><b style="font-size:16px">锅圈 · 火锅需求了解自由陪练</b><div class="pl-summary-meta"><span class="pl-status">进行中</span>　有效期：2026-09-22 00:00 — 2026-10-22 00:00　参与学员：671</div></div>
-          <div class="pl-share">⌯ 分享</div>
+          <div class="pl-share" onclick="sharePlan(activePreviewPlanId)" style="cursor:pointer">⌯ 分享</div>
         </div>
         <div class="pl-manage-main">
           <aside class="pl-manage-nav">
@@ -542,8 +607,8 @@ button,input,textarea,select{font:inherit}button{cursor:pointer}
             <button class="btn link" onclick="backList()">退出编辑</button>
             <span id="templateTitle" class="edit-title" contenteditable="true" spellcheck="false" title="点击可编辑模板名称">锅圈 · 火锅需求了解</span><span style="color:#9ba3ad">✎</span>
             <span style="margin-left:18px;color:#65707e">模板模式</span>
-            <div class="segment"><button id="fixedBtn" onclick="switchMode('fixed')">固定对话</button><button id="freeBtn" onclick="switchMode('free')">自由对话</button></div>
-            <span class="help" style="margin-left:8px;white-space:nowrap">编辑过程中可随时切换，保存时以当前模式为准</span>
+            <span id="templateModeBadge" class="mode-mini fixed">固定对话</span>
+            <span class="help" style="margin-left:8px;white-space:nowrap">创建时确定，后续不可更改</span>
             <button class="btn primary save-btn" onclick="saveTemplate()">保存模板</button>
           </div>
           <div id="canvas" class="canvas">
@@ -569,25 +634,59 @@ button,input,textarea,select{font:inherit}button{cursor:pointer}
                 <div id="fieldAiGoal" class="field"><div class="label req">AI任务目标</div><textarea id="aiGoal" class="textarea" oninput="clearNodeFieldError('fieldAiGoal')"></textarea><div class="field-error">AI任务目标不能为空</div></div>
                 <div id="fieldLearnerGoal" class="field"><div class="label req">学员任务目标</div><textarea id="learnerGoal" class="textarea" oninput="clearNodeFieldError('fieldLearnerGoal')"></textarea><div class="help">AI 将基于该目标判断当前节点是否完成；完成后才进入下一节点。</div><div class="field-error">学员任务目标不能为空</div></div>
                 <div class="field"><div class="label">对话思路</div><textarea id="dialogueIdea" class="textarea"></textarea><div class="help">该内容会作为自由模式大模型 Prompt 的参考，用于限制 AI 在当前目标中的对话方式。</div></div>
-                <div id="fieldGoalRounds" class="field"><div class="label req">最大对话轮次</div><div class="inline"><input id="goalRounds" class="input num" type="number" min="1" value="5" oninput="clearNodeFieldError('fieldGoalRounds')"><span>轮</span></div><div class="field-error">最大对话轮次不能为空</div></div>
+                <div class="field"><div class="label">目标完成时的激励反馈</div><textarea id="successFeedback" class="textarea" placeholder="请输入目标完成时的反馈文案"></textarea><div class="help">学员完成当前目标时，C 端弹窗展示该文案；不填写时仅展示目标完成状态与操作按钮。</div></div>
+                <div class="field"><div class="label">目标未完成时的提醒</div><textarea id="failFeedback" class="textarea" placeholder="请输入目标未完成时的提醒文案"></textarea><div class="help">达到最大对话轮次仍未完成当前学员任务目标时，C 端弹窗展示该文案；不填写时仅展示目标未完成状态与操作按钮。</div></div>
+                <div id="fieldGoalRounds" class="field"><div class="label req">最大对话轮次</div><div class="inline"><input id="goalRounds" class="input num" type="number" min="1" value="5" oninput="clearNodeFieldError('fieldGoalRounds')"><span>轮</span></div><div class="help">达到最大轮次仍未完成「学员任务目标」时，触发上方的目标未完成提醒。</div><div class="field-error">最大对话轮次不能为空</div></div>
               </div>
 
-              <div class="section-block">
-                <div class="section-head">问答话术</div>
-                <div id="fieldQuestion" class="field"><div class="label req">问题</div><textarea id="question" class="textarea" oninput="clearNodeFieldError('fieldQuestion')"></textarea><div class="field-error">问题不能为空</div></div>
-                <div id="fieldAnswer" class="field"><div class="label req">标准话术</div><textarea id="answer" class="textarea" oninput="clearNodeFieldError('fieldAnswer')"></textarea><div class="field-error">标准话术不能为空</div></div>
-                <div class="field"><div class="label">关键词</div><div id="keywordBox" class="keyword-box"><input id="keywordInput" placeholder="输入关键词后按回车添加"></div></div>
-                <button class="btn primary" style="width:100%" onclick="showModal('talkModal')">+ 从话术库中选择</button>
-              </div>
+              <div class="section-block qa-section">
+                <div class="section-head qa-head"><span class="qa-title">问答话术</span><button class="btn primary qa-lib-btn" onclick="openTalkPicker()">＋ 从话术库中选择</button></div>
 
-              <div class="section-block">
-                <div id="fieldBranchBase" class="field"><div class="label req">分流基数</div><input id="branchBase" class="input" type="number" min="0" value="100" oninput="clearNodeFieldError('fieldBranchBase')"><div id="branchHelp" class="help">当同一父节点下存在多条分支时，系统按各分支基数占比随机流转。</div><div class="field-error">分流基数不能为空</div></div>
+                <div id="fieldQuestion" class="field qa-row">
+                  <div class="label req qa-label">问题</div>
+                  <div class="qa-control">
+                    <textarea id="question" class="textarea qa-textarea" maxlength="100" oninput="clearNodeFieldError('fieldQuestion');updateQaCount('question','questionCount',100)"></textarea>
+                    <span id="questionCount" class="qa-count">0/100</span>
+                    <div class="field-error">问题不能为空</div>
+                  </div>
+                </div>
+
+                <div id="fieldAnswer" class="field qa-row answer-row">
+                  <div class="label req qa-label">标准话术</div>
+                  <div class="qa-control">
+                    <textarea id="answer" class="textarea qa-textarea" maxlength="500" oninput="clearNodeFieldError('fieldAnswer');updateQaCount('answer','answerCount',500)"></textarea>
+                    <span id="answerCount" class="qa-count">0/500</span>
+                    <div class="field-error">标准话术不能为空</div>
+                  </div>
+                </div>
+
+                <div class="field qa-row">
+                  <div class="label qa-label">关键词</div>
+                  <div class="qa-control"><div id="keywordBox" class="keyword-box"><input id="keywordInput" placeholder="输入关键词后回车添加"></div></div>
+                </div>
+
+                <div id="fieldBranchBase" class="field qa-row">
+                  <div class="label req qa-label">分流基数</div>
+                  <div class="qa-control qa-number-wrap">
+                    <input id="branchBase" class="input qa-number-input" type="number" min="0" value="100" oninput="clearNodeFieldError('fieldBranchBase')">
+                    <div id="branchHelp" class="qa-branch-help">当存在多条分支时，系统将按各分支基数的占比随机流转，基数相同时将完全随机分配</div>
+                    <div class="field-error">分流基数不能为空</div>
+                  </div>
+                </div>
               </div>
             </div>
           </div>
           <div id="inspectorFoot" class="inspector-foot" style="display:none"><button class="btn" onclick="cancelCurrent()">取消</button><button class="btn primary" onclick="saveCurrent()">确定</button></div>
         </aside>
       </div>
+    </div>
+
+    <div id="speechLibraryPanel" class="lib-page">
+      <div class="lib-tabs"><div class="tab" onclick="showPlanPanel()">陪练计划</div><div class="tab" onclick="showTemplatePanel()">陪练模板</div><div class="tab active">话术库</div><div class="tab" onclick="showRoleLibraryPanel()">AI角色库</div></div>
+      <div class="speech-layout"><aside class="speech-side"><div class="speech-side-head"><b>话术库</b><span class="row-action" onclick="addSpeechLibrary()">＋新建话术库</span></div><input id="speechLibSearch" class="input" placeholder="搜索话术库名称" oninput="renderSpeechLibrary()"><div id="speechLibList" class="speech-lib-list"></div></aside><section class="speech-main"><div class="speech-notice">ⓘ 话术库管理是用于统一管理陪练中使用的话术，需先新建话术库后在话术库中新增话术</div><div class="speech-toolbar"><button class="btn primary" onclick="openSpeechEditor()">新建话术</button><button class="btn outline" onclick="showAdminToast('批量导入演示','success')">导入话术</button><button class="btn" disabled>批量删除</button><input id="speechRowSearch" class="input speech-search" placeholder="搜索问题/标准话术" oninput="renderSpeechRows()"></div><table class="xe-table"><thead><tr><th style="width:42px"><input type="checkbox"></th><th>问题</th><th>标准话术</th><th style="width:160px">所属话术库</th><th style="width:170px">创建时间</th><th style="width:170px">操作</th></tr></thead><tbody id="speechTableBody"></tbody></table></section></div>
+    </div>
+    <div id="roleLibraryPanel" class="lib-page">
+      <div class="lib-tabs"><div class="tab" onclick="showPlanPanel()">陪练计划</div><div class="tab" onclick="showTemplatePanel()">陪练模板</div><div class="tab" onclick="showSpeechLibraryPanel()">话术库</div><div class="tab active">AI角色库</div></div><div class="role-toolbar"><button class="btn primary" onclick="openRoleEditor()">新建</button></div><div id="roleGrid" class="role-grid"></div><div class="list-pagination" style="justify-content:flex-end;margin-top:22px"><span>共24条，每页</span><select class="page-size"><option>10条</option></select><button class="pg-btn">‹</button><button class="pg-btn active">1</button><button class="pg-btn">2</button><button class="pg-btn">3</button><button class="pg-btn">›</button></div>
     </div>
   </main>
 </div>
@@ -602,14 +701,14 @@ button,input,textarea,select{font:inherit}button{cursor:pointer}
 
   <aside class="c2-side">
     <h3>B / C 联动预览</h3>
-    <p>切换到 C 端时，会读取当前 B 端已保存的陪练计划与陪练模板配置。</p>
+    <p>切换到 C 端时，会读取当前 B 端已保存的陪练计划与陪练模板配置。自由对话仅进入考核模式；目标完成/未完成共用同一套结果弹窗。</p>
     <div class="c2-sync"><b>当前陪练计划</b><div id="c2SyncPlan">—</div></div>
     <div class="c2-sync"><b>关联模板</b><div id="c2SyncTemplate">—</div></div>
     <div class="c2-sync"><b>当前目标配置</b><div id="c2SyncGoal">—</div></div>
     <button class="c2-ctrl" onclick="c2Reset()">重新开始 C端体验</button>
     <button class="c2-ctrl" onclick="c2ToggleScript()">查看 / 关闭标准话术</button>
     <button class="c2-ctrl" onclick="c2Answer()">模拟学员回答</button>
-    <button class="c2-ctrl" onclick="c2ShowFail()">模拟达到最大轮次未完成</button>
+    <button class="c2-ctrl" onclick="c2ShowFail()">模拟目标未完成弹窗</button>
     <button class="c2-ctrl" onclick="c2ShowReport()">查看评分报告</button>
   </aside>
 </div>
@@ -630,6 +729,7 @@ button,input,textarea,select{font:inherit}button{cursor:pointer}
           <div><b>自由对话</b><p>围绕训练目标连续多轮沟通，完成目标后再进入下一节点。</p></div>
         </label>
       </div>
+      <div class="help" style="margin-top:12px">模板模式确认后不可更改，请确认后继续。</div>
     </div>
     <div class="modal-foot"><button class="btn" onclick="cancelTemplateModeSelection()">取消</button><button class="btn primary" onclick="confirmTemplateMode()">确认</button></div>
   </div>
@@ -654,15 +754,17 @@ button,input,textarea,select{font:inherit}button{cursor:pointer}
     <div class="modal-body">
       <table class="table">
         <thead><tr><th></th><th>问题</th><th>标准话术</th><th>所属话术库</th></tr></thead>
-        <tbody>
-          <tr><td><input type="radio" name="talk" value="hotpot"></td><td>火锅，五六个人。</td><td>好的，这边都是火锅类的产品，这边是底料，咱是吃辣的还是不辣的？</td><td>锅圈火锅需求了解</td></tr>
-          <tr><td><input type="radio" name="talk" value="flavor"></td><td>鸳鸯锅，有孩子。</td><td>好的，辣的底料咱们有微辣的、中辣的、重辣的；不辣的底料有番茄、三鲜、金汤......</td><td>锅圈火锅需求了解</td></tr>
-        </tbody>
+        <tbody id="talkPickBody"></tbody>
       </table>
     </div>
     <div class="modal-foot"><button class="btn" onclick="hideModal('talkModal')">取消</button><button class="btn primary" onclick="applyTalk()">确认</button></div>
   </div>
 </div>
+
+
+<div id="roleSelectMask" class="modal-mask"><div class="modal" style="width:860px"><div class="modal-head">选择陪练角色 <button class="x" onclick="hideModal('roleSelectMask')">×</button></div><div class="modal-body"><div style="display:flex;justify-content:flex-end;margin-bottom:12px"><input id="roleSelectSearch" class="input" style="width:220px" placeholder="请输入角色名称" oninput="renderRoleSelect()"><button class="btn primary" style="margin-left:8px" onclick="renderRoleSelect()">搜索</button></div><div id="roleSelectGrid" class="role-select-grid"></div></div><div class="modal-foot"><button class="btn" onclick="hideModal('roleSelectMask')">取消</button><button class="btn primary" onclick="confirmRoleSelect()">确认</button></div></div></div>
+<div id="roleDrawerMask" class="lib-drawer-mask"><div class="lib-drawer"><div class="lib-drawer-h"><span id="roleDrawerTitle">新建角色</span><button class="x" onclick="closeRoleEditor()">×</button></div><div class="lib-drawer-body"><div class="lib-field"><label>* 角色名称</label><input id="roleNameInput" maxlength="10" placeholder="请输入角色名称"></div><div class="lib-field"><label>* 角色形象</label><div style="display:flex;gap:10px;font-size:30px"><span>👩🏻</span><span>👨🏻</span><span>👩🏻‍💼</span><span>👨🏻‍💼</span><span>👵🏻</span><span>👴🏻</span></div></div><div class="lib-field"><label>* 声音</label><select id="roleVoiceInput"><option>温柔女声</option><option>沉稳男声</option><option>自然女声</option></select></div><div class="lib-field"><label>* 年龄</label><input id="roleAgeInput" type="number" placeholder="请输入年龄"></div><div class="lib-field"><label>* 性别</label><select id="roleGenderInput"><option>女</option><option>男</option></select></div><div class="lib-field"><label>* 性格特征</label><textarea id="roleTraitsInput" placeholder="请输入性格特征描述"></textarea></div><div class="lib-field"><label>* 人设描述</label><textarea id="roleDescInput" placeholder="请输入角色人设描述"></textarea></div></div><div class="lib-drawer-foot"><button class="btn" onclick="closeRoleEditor()">取消</button> <button class="btn primary" onclick="saveRoleEditor()">确认</button></div></div></div>
+<div id="speechEditorMask" class="modal-mask"><div class="modal" style="width:780px"><div class="modal-head">新建话术 <button class="x" onclick="hideModal('speechEditorMask')">×</button></div><div class="modal-body"><div class="lib-field"><label>* 所属话术库</label><select id="speechLibInput"></select></div><div class="lib-field"><label>* 问题</label><textarea id="speechQInput" maxlength="100" placeholder="请输入问题描述（最多100字）"></textarea></div><div class="lib-field"><label>* 标准话术</label><textarea id="speechAInput" maxlength="500" placeholder="请输入标准答案，将作为评分的主要依据"></textarea></div><div class="lib-field"><label>关键词</label><input id="speechKInput" placeholder="输入关键词后回车添加"></div></div><div class="modal-foot"><button class="btn" onclick="hideModal('speechEditorMask')">取消</button><button class="btn primary" onclick="saveSpeechEditor()">确认</button></div></div></div>
 
 <script>
 let pendingNewTemplateMode=null;
@@ -694,6 +796,11 @@ function confirmTemplateMode(){
 }
 
 let mode='free', selectedId=null, nextId=1;
+const roleRecords=[{id:'role_chen',name:'[fur] 陈先生',age:35,gender:'男',traits:'理性、会比价、决策慢',desc:'35岁男性，和太太一起逛店，购买前会仔细比较价格与配置。',avatar:'👨🏻'},{id:'role_wang',name:'[foo] 王女士',age:32,gender:'女',traits:'在意新鲜度和分量、希望省事、不太有耐心',desc:'32岁女性，第一次进店，对商品信息不熟悉。',avatar:'👩🏻'},{id:'role_lin',name:'[tea] 林总',age:45,gender:'男',traits:'精明务实、价格敏感、但态度礼貌',desc:'45岁男性，茶企老板，出差期间到店咨询。',avatar:'👨🏻‍💼'},{id:'role_li',name:'[收银] 会员李女士',age:33,gender:'女',traits:'沟通态度友好积极',desc:'33岁女性，郑州，家住门店附近小区。',avatar:'👩🏻'},{id:'role_gu',name:'顾客张女士',age:34,gender:'女',traits:'沟通态度友好积极',desc:'34岁女性，成都，家庭月收入约1.8万。',avatar:'👩🏻'},{id:'role_lin2',name:'[服装] 顾客林女士',age:32,gender:'女',traits:'精明型 + 犹豫型：语速中等，进店先翻吊牌看价格',desc:'32岁女性，杭州，互联网公司行政。',avatar:'👩🏻'},{id:'role_tea',name:'茶叶客户陈总',age:45,gender:'男',traits:'挑剔型 + 谨慎型：懂茶但爱比价',desc:'杭州人，经常采购中高端茶礼。',avatar:'👴🏻'},{id:'role_home',name:'理性家购陈先生',age:36,gender:'男',traits:'谨慎型、挑剔型，重视安全与真实数据',desc:'家庭增购新能源汽车，要求提供长期使用成本。',avatar:'👨🏻'}];
+let selectedPlanRoleId='role_li',pendingRoleId='role_li';
+const speechLibraries=['汽车零售全流程八问','八马—518普洱节','卖茶七步法','林默哈哈','tbwisk的话术','张凤','davis的话术','测试话术库','保险','小红本话术库'];
+let activeSpeechLibrary='卖茶七步法';
+let speechRows=[{id:'sp1',lib:'卖茶七步法',q:'（付完款准备离开）谢谢啊，东西不错。',a:'谢谢您！欢迎下次光临八马茶业~',keywords:['感谢','欢迎']},{id:'sp2',lib:'卖茶七步法',q:'好的，我买这个，麻烦帮我装一下。',a:'好的，马上帮您装好。对了，麻烦您加一下我们的会员。',keywords:['会员']},{id:'sp3',lib:'卖茶七步法',q:'你们现在有没有折扣或者优惠活动？',a:'先生/女士，我们八马是全国统一价的，品质有保障。',keywords:['统一价','品质']},{id:'sp4',lib:'卖茶七步法',q:'你们这款茶有什么特点，能给我介绍一下吗？',a:'这款茶我给您介绍一下，这是我们店里卖得比较好的产品。',keywords:['特点','介绍']},{id:'sp5',lib:'卖茶七步法',q:'我这次出差，想顺便带点东西回去给家里人。',a:'您刚才提到要给家里人带点东西，一看您就是很顾家。',keywords:['送礼']},{id:'sp6',lib:'卖茶七步法',q:'我想买茶送人，你们这里有什么推荐的？',a:'买茶送人是个很好的选择！请问您打算送什么关系的人呢？',keywords:['送礼对象','推荐']},{id:'sp7',lib:'卖茶七步法',q:'你好，我想买点茶叶，不知道买什么好……',a:'您好，欢迎光临八马！请问您今天是想自己喝还是送人呢？',keywords:['自饮','送人']}];
 
 
 const templateRecords=[
@@ -701,7 +808,7 @@ const templateRecords=[
   {id:'tpl_demo_fixed',name:'默认陪练模板111',mode:'fixed',status:'已启用',created:'2026-09-22 00:04',hotCount:4,nodes:null}
 ];
 const planRecords=[
-  {id:'plan_demo_1',name:'锅圈 · 火锅需求了解自由陪练',visibility:'全员可见',students:671,start:'2026-09-22',end:'2026-10-22',created:'2026-09-22 14:35',status:'进行中',templateId:'tpl_demo_free',templateMode:'free',intro:'门店导购面对顾客进行需求了解、底料推荐与关联销售练习',practiceMode:'voice',completionStandard:'完成练习1次或评分达到60分以上'},
+  {id:'plan_demo_1',name:'锅圈 · 火锅需求了解自由陪练',visibility:'全员可见',students:671,start:'2026-09-22',end:'2026-10-22',created:'2026-09-22 14:35',status:'进行中',templateId:'tpl_demo_free',templateMode:'free',intro:'门店导购面对顾客进行需求了解、底料推荐与关联销售练习',practiceMode:'voice',completionStandard:'完成练习1次或评分达到60分以上',scriptRule:'free_points',roleId:'role_li'},
   {id:'plan_demo_2',name:'收银环节-会员拉新与充值推荐陪练',visibility:'全员可见',students:671,start:'2026-09-20',end:'2026-10-20',created:'2026-09-20 14:37',status:'进行中'},
   {id:'plan_demo_3',name:'茶叶销售-到店转化实战陪练',visibility:'全员可见',students:671,start:'2026-09-17',end:'2026-12-31',created:'2026-09-17 13:00',status:'进行中'}
 ];
@@ -713,6 +820,29 @@ function nowText(){
   const pad=n=>String(n).padStart(2,'0');
   return `${d.getFullYear()}-${pad(d.getMonth()+1)}-${pad(d.getDate())} ${pad(d.getHours())}:${pad(d.getMinutes())}`;
 }
+function hideMainPanels(){['listPanel','planPanel','editorPanel','speechLibraryPanel','roleLibraryPanel'].forEach(id=>{const el=document.getElementById(id);if(el)el.style.display='none'});}
+function showSpeechLibraryPanel(){hideMainPanels();const el=document.getElementById('speechLibraryPanel');el.style.display='block';renderSpeechLibrary();}
+function showRoleLibraryPanel(){hideMainPanels();const el=document.getElementById('roleLibraryPanel');el.style.display='block';renderRoleLibrary();}
+function renderRoleLibrary(){const g=document.getElementById('roleGrid');if(!g)return;g.innerHTML=roleRecords.map(r=>`<div class="role-card"><div class="role-actions"><span onclick="openRoleEditor('${r.id}')">编辑</span>　<span onclick="deleteRole('${r.id}')">删除</span></div><div class="role-card-head"><div class="role-avatar">${r.avatar}</div><div><span class="role-name">${esc(r.name)}</span><span class="role-age">${r.age}岁</span></div></div><div class="role-tagline">${esc(r.traits)}</div><div class="role-desc">${esc(r.desc)}</div></div>`).join('');}
+let editingRoleId=null;
+function openRoleEditor(id=null){editingRoleId=id;const r=roleRecords.find(x=>x.id===id);document.getElementById('roleDrawerTitle').textContent=r?'编辑角色':'新建角色';document.getElementById('roleNameInput').value=r?.name||'';document.getElementById('roleAgeInput').value=r?.age||'';document.getElementById('roleGenderInput').value=r?.gender||'女';document.getElementById('roleTraitsInput').value=r?.traits||'';document.getElementById('roleDescInput').value=r?.desc||'';document.getElementById('roleDrawerMask').classList.add('show');}
+function closeRoleEditor(){document.getElementById('roleDrawerMask').classList.remove('show')}
+function saveRoleEditor(){const name=(document.getElementById('roleNameInput').value||'').trim();if(!name){showAdminToast('请输入角色名称','error');return}const obj={id:editingRoleId||'role_'+Date.now(),name,age:Number(document.getElementById('roleAgeInput').value)||30,gender:document.getElementById('roleGenderInput').value,traits:(document.getElementById('roleTraitsInput').value||'').trim()||'沟通态度友好积极',desc:(document.getElementById('roleDescInput').value||'').trim()||'暂无角色描述',avatar:document.getElementById('roleGenderInput').value==='男'?'👨🏻':'👩🏻'};if(editingRoleId){const i=roleRecords.findIndex(x=>x.id===editingRoleId);roleRecords[i]=obj}else roleRecords.unshift(obj);closeRoleEditor();renderRoleLibrary();}
+function deleteRole(id){const i=roleRecords.findIndex(x=>x.id===id);if(i>=0)roleRecords.splice(i,1);renderRoleLibrary();}
+function renderSpeechLibrary(){const list=document.getElementById('speechLibList');if(!list)return;const q=(document.getElementById('speechLibSearch')?.value||'').trim();const libs=speechLibraries.filter(x=>!q||x.includes(q));list.innerHTML=libs.map(lib=>`<div class="speech-lib-item ${lib===activeSpeechLibrary?'active':''}" onclick="activeSpeechLibrary='${lib}';renderSpeechLibrary()">${esc(lib)} <span style="float:right">···</span></div>`).join('');renderSpeechRows();}
+function renderSpeechRows(){const tb=document.getElementById('speechTableBody');if(!tb)return;const q=(document.getElementById('speechRowSearch')?.value||'').trim();const rows=speechRows.filter(x=>x.lib===activeSpeechLibrary&&(!q||x.q.includes(q)||x.a.includes(q)));tb.innerHTML=rows.map(r=>`<tr><td><input type="checkbox"></td><td>${esc(r.q)}</td><td>${esc(r.a)}</td><td>${esc(r.lib)}</td><td>2026-05-19 18:14:29</td><td class="speech-actions"><span onclick="showAdminToast('详情','success')">详情</span>　<span onclick="openSpeechEditor('${r.id}')">编辑</span>　<span onclick="copySpeech('${r.id}')">复制</span>　<span onclick="deleteSpeech('${r.id}')">删除</span></td></tr>`).join('');}
+function addSpeechLibrary(){const name=prompt('请输入话术库名称');if(name&&name.trim()){speechLibraries.unshift(name.trim());activeSpeechLibrary=name.trim();renderSpeechLibrary()}}
+function fillSpeechLibOptions(){const el=document.getElementById('speechLibInput');if(el)el.innerHTML=speechLibraries.map(x=>`<option ${x===activeSpeechLibrary?'selected':''}>${esc(x)}</option>`).join('')}
+let editingSpeechId=null;
+function openSpeechEditor(id=null){editingSpeechId=id;fillSpeechLibOptions();const r=speechRows.find(x=>x.id===id);document.getElementById('speechLibInput').value=r?.lib||activeSpeechLibrary;document.getElementById('speechQInput').value=r?.q||'';document.getElementById('speechAInput').value=r?.a||'';document.getElementById('speechKInput').value=(r?.keywords||[]).join('、');document.getElementById('speechEditorMask').classList.add('show');}
+function saveSpeechEditor(){const q=(document.getElementById('speechQInput').value||'').trim(),a=(document.getElementById('speechAInput').value||'').trim();if(!q||!a){showAdminToast('问题和标准话术不能为空','error');return}const obj={id:editingSpeechId||'sp_'+Date.now(),lib:document.getElementById('speechLibInput').value,q,a,keywords:(document.getElementById('speechKInput').value||'').split(/[、,，]/).filter(Boolean)};if(editingSpeechId){const i=speechRows.findIndex(x=>x.id===editingSpeechId);speechRows[i]=obj}else speechRows.unshift(obj);activeSpeechLibrary=obj.lib;hideModal('speechEditorMask');renderSpeechLibrary();}
+function copySpeech(id){const r=speechRows.find(x=>x.id===id);if(r)speechRows.unshift({...r,id:'sp_'+Date.now(),q:r.q+' - 副本'});renderSpeechRows()}
+function deleteSpeech(id){speechRows=speechRows.filter(x=>x.id!==id);renderSpeechRows()}
+function openRoleSelectModal(){pendingRoleId=selectedPlanRoleId;document.getElementById('roleSelectMask').classList.add('show');renderRoleSelect()}
+function renderRoleSelect(){const g=document.getElementById('roleSelectGrid');if(!g)return;const q=(document.getElementById('roleSelectSearch')?.value||'').trim();g.innerHTML=roleRecords.filter(r=>!q||r.name.includes(q)).map(r=>`<div class="role-select-card ${r.id===pendingRoleId?'selected':''}" onclick="pendingRoleId='${r.id}';renderRoleSelect()"><div class="mini"><div class="role-avatar">${r.avatar}</div><div><b>${esc(r.name)}</b><div class="help">${r.gender}｜${r.age}岁</div></div></div><div class="role-tagline">${esc(r.traits)}</div><div class="role-desc">${esc(r.desc)}</div></div>`).join('')}
+function confirmRoleSelect(){selectedPlanRoleId=pendingRoleId;renderSelectedPlanRole();hideModal('roleSelectMask')}
+function renderSelectedPlanRole(){const box=document.getElementById('plCreateRole');if(!box)return;const r=roleRecords.find(x=>x.id===selectedPlanRoleId);box.innerHTML=r?`<div class="selected-role-pill"><div class="role-avatar">${r.avatar}</div><div><b>${esc(r.name)}</b><div class="help">${esc(r.traits)}</div></div><button class="btn outline" onclick="openRoleSelectModal()">更换角色</button></div>`:'<button class="btn outline" onclick="openRoleSelectModal()">＋ 选择角色</button>';}
+
 function renderTemplateList(){
   const body=document.getElementById('templateListBody'); if(!body)return;
   body.innerHTML='';
@@ -838,8 +968,8 @@ function renderPlanList(){
       <td>${r.created}</td>
       <td><span class="status-dot">${r.status}</span></td>
       <td><div class="row-actions">
-        <span class="row-action" onclick="openPlanManage('basic')">管理</span>
-        <span class="row-action" onclick="openPlanManage('dashboard')">数据统计</span>
+        <span class="row-action" onclick="openPlanManage('basic','${r.id}')">管理</span>
+        <span class="row-action" onclick="openPlanManage('dashboard','${r.id}')">数据统计</span>
         <span class="more-wrap">
           <span class="row-action" onclick="togglePlanMore('${r.id}',event)">更多⌄</span>
           <div id="more_${r.id}" class="more-menu">
@@ -867,7 +997,12 @@ function togglePlanMore(id,event){
   if(el&&!was)el.classList.add('show');
 }
 function sharePlan(id){
-  closeAllPlanMore();const r=planRecords.find(x=>x.id===id);if(r)alert(`已生成「${r.name}」的分享链接（Demo）`);
+  closeAllPlanMore();
+  const r=planRecords.find(x=>x.id===id&&!x.deleted);
+  if(!r)return;
+  activePreviewPlanId=id;
+  c2LoadFromB();
+  switchTop('c');
 }
 function deletePlanRecord(id){
   closeAllPlanMore();const r=planRecords.find(x=>x.id===id);if(!r)return;
@@ -881,10 +1016,10 @@ function copyPlanRecord(id){
 document.addEventListener('click',e=>{if(!e.target.closest('.more-wrap'))closeAllPlanMore()});
 
 const sampleNodes=[
-{id:1,parentId:null,q:'顾客刚进店，尚未说明具体用餐需求。',a:'美女，咱今天吃火锅还是烧烤呢？几个人吃？',keywords:['火锅','烧烤','人数'],branchBase:100,aiGoal:'以进店顾客身份先不主动透露完整需求，等待导购询问后说明“吃火锅、五六个人”。',learnerGoal:'主动询问顾客今天吃火锅还是烧烤，并确认用餐人数。',idea:'不要一开始主动把所有需求说完；根据导购的提问逐步回答。如果导购没有询问用餐类型或人数，可以保持简短回应，等待其继续了解。',goalRounds:3},
-{id:2,parentId:1,q:'火锅，五六个人。',a:'好的，这边都是火锅类的产品，这边是底料，咱是吃辣的还是不辣的？',keywords:['火锅','底料','辣','不辣'],branchBase:100,aiGoal:'在导购询问口味时，补充自己要吃鸳鸯锅且同行有孩子。',learnerGoal:'继续确认顾客吃辣还是不辣，并识别“有孩子”这一用餐场景。',idea:'当导购询问辣口或清汤需求时，再告诉对方“鸳鸯锅，有孩子”；不要提前主动给出具体底料口味。',goalRounds:3},
-{id:3,parentId:2,q:'鸳鸯锅，有孩子。',a:'好的，辣的底料咱们有微辣的、中辣的、重辣的；不辣的底料有番茄、三鲜、金汤...... 您看咱喜欢吃那个口味的？',keywords:['微辣','中辣','重辣','番茄','三鲜','金汤'],branchBase:100,aiGoal:'在导购介绍底料口味后，选择“中辣的牛油底料 + 番茄底料”。',learnerGoal:'清晰介绍辣与不辣底料的可选口味，并引导顾客明确选择具体底料。',idea:'先听导购介绍可选口味；如果介绍不完整，可以追问“不辣的还有什么”；介绍充分后选择中辣和番茄。',goalRounds:3},
-{id:4,parentId:3,q:'中辣的就行，再拿个番茄的底料。',a:'好的，这个中辣的牛油底料 500g 要加两瓶矿泉水、凉水下锅口感最佳；番茄底料 200g 也是加两瓶矿泉水，它比较浓稠要开水下锅，避免糊锅。您再看看其它产品、这边有牛肉卷、羊肉卷、虾滑、毛肚、午餐肉......',keywords:['500g','两瓶矿泉水','凉水下锅','200g','开水下锅','避免糊锅','牛肉卷','羊肉卷','虾滑','毛肚','午餐肉'],branchBase:100,aiGoal:'选定中辣牛油和番茄底料后，听取使用方法与其他产品推荐；信息充分后以“好的，我先看看”结束当前话题。',learnerGoal:'准确说明两种底料的加水量和下锅方式，并自然推荐牛肉卷、羊肉卷、虾滑、毛肚、午餐肉等其他火锅产品。',idea:'如果导购没有讲清加水量或下锅方式，可以追问“怎么煮比较合适”；如果只讲底料不推荐其他产品，可以继续表现出浏览需求。信息充分后回复“好的，我先看看”。',goalRounds:4}
+{id:1,parentId:null,q:'顾客刚进店，尚未说明具体用餐需求。',a:'美女，咱今天吃火锅还是烧烤呢？几个人吃？',keywords:['火锅','烧烤','人数'],branchBase:100,aiGoal:'以进店顾客身份先不主动透露完整需求，等待导购询问后说明“吃火锅、五六个人”。',learnerGoal:'主动询问顾客今天吃火锅还是烧烤，并确认用餐人数。',idea:'不要一开始主动把所有需求说完；根据导购的提问逐步回答。如果导购没有询问用餐类型或人数，可以保持简短回应，等待其继续了解。',goalRounds:3,passCondition:'学员主动询问顾客用餐类型，并确认用餐人数。',successFeedback:'很好，你已经完成顾客基础用餐需求的了解，已确认用餐类型和人数，可以进入下一个目标。',failFeedback:'你已经确认了部分基础需求，但还没有完整了解用餐人数。建议重新演练本目标，补充询问相关信息。'},
+{id:2,parentId:1,q:'火锅，五六个人。',a:'好的，这边都是火锅类的产品，这边是底料，咱是吃辣的还是不辣的？',keywords:['火锅','底料','辣','不辣'],branchBase:100,aiGoal:'在导购询问口味时，补充自己要吃鸳鸯锅且同行有孩子。',learnerGoal:'继续确认顾客吃辣还是不辣，并识别“有孩子”这一用餐场景。',idea:'当导购询问辣口或清汤需求时，再告诉对方“鸳鸯锅，有孩子”；不要提前主动给出具体底料口味。',goalRounds:3,passCondition:'学员确认顾客辣度/口味偏好，并识别是否有儿童同行。',successFeedback:'很好，你已经确认了顾客的口味和同行情况，可以进入下一个目标。',failFeedback:'你还没有充分确认顾客的口味与同行情况。建议重新询问辣度偏好，并关注是否有儿童同行。'},
+{id:3,parentId:2,q:'鸳鸯锅，有孩子。',a:'好的，辣的底料咱们有微辣的、中辣的、重辣的；不辣的底料有番茄、三鲜、金汤...... 您看咱喜欢吃那个口味的？',keywords:['微辣','中辣','重辣','番茄','三鲜','金汤'],branchBase:100,aiGoal:'在导购介绍底料口味后，选择“中辣的牛油底料 + 番茄底料”。',learnerGoal:'清晰介绍辣与不辣底料的可选口味，并引导顾客明确选择具体底料。',idea:'先听导购介绍可选口味；如果介绍不完整，可以追问“不辣的还有什么”；介绍充分后选择中辣和番茄。',goalRounds:3,passCondition:'学员完成辣与不辣底料介绍，并引导顾客明确选择具体底料。',successFeedback:'很好，你已经完成底料介绍并帮助顾客做出选择，可以进入下一个目标。',failFeedback:'你还没有帮助顾客完成底料口味选择。建议重新介绍可选口味，并继续确认具体偏好。'},
+{id:4,parentId:3,q:'中辣的就行，再拿个番茄的底料。',a:'好的，这个中辣的牛油底料 500g 要加两瓶矿泉水、凉水下锅口感最佳；番茄底料 200g 也是加两瓶矿泉水，它比较浓稠要开水下锅，避免糊锅。您再看看其它产品、这边有牛肉卷、羊肉卷、虾滑、毛肚、午餐肉......',keywords:['500g','两瓶矿泉水','凉水下锅','200g','开水下锅','避免糊锅','牛肉卷','羊肉卷','虾滑','毛肚','午餐肉'],branchBase:100,aiGoal:'选定中辣牛油和番茄底料后，听取使用方法与其他产品推荐；信息充分后以“好的，我先看看”结束当前话题。',learnerGoal:'准确说明两种底料的加水量和下锅方式，并自然推荐牛肉卷、羊肉卷、虾滑、毛肚、午餐肉等其他火锅产品。',idea:'如果导购没有讲清加水量或下锅方式，可以追问“怎么煮比较合适”；如果只讲底料不推荐其他产品，可以继续表现出浏览需求。信息充分后回复“好的，我先看看”。',goalRounds:4,passCondition:'学员准确说明两种底料的使用方法，并完成至少一次自然的关联产品推荐。',successFeedback:'很好，你已经完成使用说明和关联推荐，本次目标已达成。',failFeedback:'你还没有完整说明底料使用方法并完成关联推荐。建议重新补充加水量、下锅方式和其他火锅产品推荐。'}
 ];
 let nodes=[];
 
@@ -928,6 +1063,11 @@ function switchMode(m){
   const freeBtn=document.getElementById('freeBtn');
   if(fixedBtn)fixedBtn.className=m==='fixed'?'active':'';
   if(freeBtn)freeBtn.className=m==='free'?'free-active':'';
+  const badge=document.getElementById('templateModeBadge');
+  if(badge){
+    badge.textContent=m==='free'?'自由对话':'固定对话';
+    badge.className='mode-mini '+(m==='free'?'free':'fixed');
+  }
   document.getElementById('freeGoalBlock').style.display=m==='free'?'block':'none';
   renderTree();
   if(selectedId!==null)selectNode(selectedId);else updateInspector();
@@ -970,10 +1110,11 @@ function renderTree(){
   canvas.style.minHeight=Math.max(760,...Object.values(pos).map(p=>p.y+170))+'px';updateInspector();
 }
 
-function addChild(parentId){const n={id:nextId++,parentId,q:'',a:'',keywords:[],branchBase:100,aiGoal:'',learnerGoal:'',idea:'',goalRounds:5};nodes.push(n);selectedId=n.id;renderTree();selectNode(n.id)}
+function addChild(parentId){const n={id:nextId++,parentId,q:'',a:'',keywords:[],branchBase:100,aiGoal:'',learnerGoal:'',idea:'',goalRounds:5,successFeedback:'',failFeedback:''};nodes.push(n);selectedId=n.id;renderTree();selectNode(n.id)}
 function deleteNode(id){const ids=new Set([id]);let changed=true;while(changed){changed=false;nodes.forEach(n=>{if(n.parentId!==null&&ids.has(n.parentId)&&!ids.has(n.id)){ids.add(n.id);changed=true}})}nodes=nodes.filter(n=>!ids.has(n.id));if(ids.has(selectedId))selectedId=nodes[0]?.id??null;renderTree();if(selectedId!==null)selectNode(selectedId)}
 function updateInspector(){const has=selectedId!==null&&!!current();document.getElementById('emptyInspector').style.display=has?'none':'block';document.getElementById('nodeInspector').style.display=has?'block':'none';document.getElementById('inspectorFoot').style.display=has?'flex':'none'}
-function selectNode(id){document.querySelector('.editor')?.classList.remove('inspector-collapsed');selectedId=id;renderTree();const n=current();if(!n)return;document.getElementById('question').value=n.q||'';document.getElementById('answer').value=n.a||'';document.getElementById('branchBase').value=n.branchBase??100;const goalBadge=document.getElementById('currentGoalIndex');if(goalBadge)goalBadge.textContent='目标'+goalIndexOf(n.id);document.getElementById('aiGoal').value=n.aiGoal||'';document.getElementById('learnerGoal').value=n.learnerGoal||'';document.getElementById('dialogueIdea').value=n.idea||'';document.getElementById('goalRounds').value=n.goalRounds||5;renderKeywords(n.keywords||[]);const siblings=childrenOf(n.parentId);document.getElementById('branchHelp').textContent=siblings.length>1?`当前父节点下共有 ${siblings.length} 条分支。当前目标完成后，系统按各分支基数占比随机进入下一节点。当前节点基数：${n.branchBase??100}。`:'当同一父节点下存在多条分支时，系统按各分支基数占比随机流转；自由模式下仅在当前目标完成，或达到最大对话轮次后进入下一节点。'}
+function updateQaCount(inputId,countId,max){const el=document.getElementById(inputId),counter=document.getElementById(countId);if(!el||!counter)return;counter.textContent=`${el.value.length}/${max}`}
+function selectNode(id){document.querySelector('.editor')?.classList.remove('inspector-collapsed');selectedId=id;renderTree();const n=current();if(!n)return;document.getElementById('question').value=n.q||'';document.getElementById('answer').value=n.a||'';updateQaCount('question','questionCount',100);updateQaCount('answer','answerCount',500);document.getElementById('branchBase').value=n.branchBase??100;const goalBadge=document.getElementById('currentGoalIndex');if(goalBadge)goalBadge.textContent='目标'+goalIndexOf(n.id);document.getElementById('aiGoal').value=n.aiGoal||'';document.getElementById('learnerGoal').value=n.learnerGoal||'';document.getElementById('dialogueIdea').value=n.idea||'';document.getElementById('goalRounds').value=n.goalRounds||5;document.getElementById('successFeedback').value=n.successFeedback||'';document.getElementById('failFeedback').value=n.failFeedback||'';renderKeywords(n.keywords||[]);const siblings=childrenOf(n.parentId);document.getElementById('branchHelp').textContent=siblings.length>1?`当前父节点下共有 ${siblings.length} 条分支，系统将按各分支基数的占比随机流转；当前节点基数为 ${n.branchBase??100}。`:'当存在多条分支时，系统将按各分支基数的占比随机流转，基数相同时将完全随机分配'}
 function renderKeywords(arr){const box=document.getElementById('keywordBox');box.querySelectorAll('.keyword-chip').forEach(x=>x.remove());arr.forEach((k,i)=>{const chip=document.createElement('span');chip.className='keyword-chip';chip.innerHTML=`${esc(k)}<button onclick="removeKeyword(${i})">×</button>`;box.insertBefore(chip,document.getElementById('keywordInput'))})}
 function removeKeyword(i){const n=current();if(!n)return;n.keywords.splice(i,1);renderKeywords(n.keywords)}
 document.getElementById('keywordInput').addEventListener('keydown',e=>{if(e.key==='Enter'){e.preventDefault();const n=current();if(!n)return;const v=e.target.value.trim();if(!v)return;if(!n.keywords.includes(v))n.keywords.push(v);e.target.value='';renderKeywords(n.keywords)}})
@@ -1014,6 +1155,8 @@ function saveCurrent(){
     n.learnerGoal=document.getElementById('learnerGoal').value.trim();
     n.idea=document.getElementById('dialogueIdea').value.trim();
     n.goalRounds=Math.max(1,Number(document.getElementById('goalRounds').value)||1);
+    n.successFeedback=document.getElementById('successFeedback').value.trim();
+    n.failFeedback=document.getElementById('failFeedback').value.trim();
   }
   const savedId=n.id;
   selectedId=null;
@@ -1029,23 +1172,19 @@ function cancelCurrent(){
 }
 function showModal(id){document.getElementById(id).classList.add('show')}
 function hideModal(id){document.getElementById(id).classList.remove('show')}
-function applyTalk(){const c=document.querySelector('input[name="talk"]:checked');if(!c)return alert('请选择一条话术');const n=current();if(!n)return;const data=c.value==='hotpot'?{q:'火锅，五六个人。',a:'好的，这边都是火锅类的产品，这边是底料，咱是吃辣的还是不辣的？',k:['火锅','底料','辣','不辣']}:{q:'鸳鸯锅，有孩子。',a:'好的，辣的底料咱们有微辣的、中辣的、重辣的；不辣的底料有番茄、三鲜、金汤......',k:['鸳鸯锅','孩子','中辣','番茄']};n.q=data.q;n.a=data.a;n.keywords=data.k;hideModal('talkModal');selectNode(n.id)}
+function openTalkPicker(){const tb=document.getElementById('talkPickBody');if(tb)tb.innerHTML=speechRows.slice(0,10).map(r=>`<tr><td><input type="radio" name="talk" value="${r.id}"></td><td>${esc(r.q)}</td><td>${esc(r.a)}</td><td>${esc(r.lib)}</td></tr>`).join('');showModal('talkModal')}
+function applyTalk(){const c=document.querySelector('input[name="talk"]:checked');if(!c)return alert('请选择一条话术');const n=current();if(!n)return;const r=speechRows.find(x=>x.id===c.value);if(!r)return;n.q=r.q;n.a=r.a;n.keywords=[...(r.keywords||[])];hideModal('talkModal');selectNode(n.id)}
 
-const plGoals=[
-  {id:1,name:'了解顾客基础用餐需求',desc:'主动询问顾客吃火锅还是烧烤，并确认用餐人数',weight:20,enabled:true},
-  {id:2,name:'确认口味及同行情况',desc:'确认顾客吃辣还是不辣，并识别是否有儿童同行',weight:20,enabled:true},
-  {id:3,name:'引导完成底料选择',desc:'介绍可选口味并引导顾客明确选择具体底料',weight:25,enabled:true},
-  {id:4,name:'使用说明及关联推荐',desc:'说明底料使用方法，并自然推荐其他火锅产品',weight:35,enabled:true}
-];
 let plCreateTemplate='none',plCreateTemplateId=null,plPickedTemplateId=null;
 let plCreateCommentOn=false;
 let plSavedCommentOn=false;
 
-function showPlanPanel(){document.getElementById('listPanel').style.display='none';document.getElementById('editorPanel').style.display='none';document.getElementById('planPanel').style.display='block';showPlanList()}
-function showTemplatePanel(){document.getElementById('planPanel').style.display='none';document.getElementById('editorPanel').style.display='none';document.getElementById('listPanel').style.display='block'}
+function showPlanPanel(){hideMainPanels();document.getElementById('planPanel').style.display='block';showPlanList()}
+function showTemplatePanel(){hideMainPanels();document.getElementById('listPanel').style.display='block'}
 function hidePlPages(){['plList','plCreate','plManage'].forEach(id=>document.getElementById(id).classList.remove('active'))}
 function showPlanList(){hidePlPages();document.getElementById('plList').classList.add('active');renderPlanList()}
 function openPlanCreate(){
+  selectedPlanRoleId='role_li';
   hidePlPages();
   document.getElementById('plCreate').classList.add('active');
   plCreateTemplate='none';plCreateTemplateId=null;plCreateCommentOn=false;plPickedTemplateId=null;
@@ -1056,11 +1195,13 @@ function openPlanCreate(){
   document.querySelector('input[name="createPracticeMode"][value="voice"]').checked=true;
   document.querySelector('input[name="createVisibility"]').checked=true;
   document.getElementById('plCreateTpl').innerHTML='<button class="btn outline" onclick="openPlanTemplateModal()">＋ 选择模板</button>';
+  renderSelectedPlanRole();
   renderCreateCommentMode();
   renderCreateScore();
 }
 let currentManageTab='basic';
-function openPlanManage(tab='basic'){
+function openPlanManage(tab='basic',id=null){
+  if(id)activePreviewPlanId=id;
   hidePlPages();
   document.getElementById('plManage').classList.add('active');
   renderManageViews();
@@ -1074,6 +1215,22 @@ function switchManageTab(tab){
   const footer=document.getElementById('plManageFooter');
   if(footer)footer.style.display=['users','dashboard'].includes(tab)?'none':'flex';
 }
+function toggleCompletionInput(checkId,inputId){
+  const check=document.getElementById(checkId),input=document.getElementById(inputId);
+  if(input)input.disabled=!check?.checked;
+}
+function removePlanForbiddenChip(btn){btn?.closest('.pl-rule-chip')?.remove()}
+function addPlanForbiddenWord(event,boxId){
+  if(event.key!=='Enter')return;
+  event.preventDefault();
+  const input=event.target,box=document.getElementById(boxId);
+  const value=(input.value||'').trim();
+  if(!value||!box)return;
+  const chip=document.createElement('span');chip.className='pl-rule-chip';
+  chip.innerHTML=`${esc(value)}<button onclick="removePlanForbiddenChip(this)">×</button>`;
+  box.insertBefore(chip,input);input.value='';
+}
+
 function showAdminToast(message,type='success'){
   document.querySelectorAll('.xe-top-toast').forEach(x=>x.remove());
   const el=document.createElement('div');
@@ -1091,10 +1248,9 @@ function saveManageChanges(){
     showAdminToast(`评分维度权重之和必须等于100，当前为${total}`,'error');
     return;
   }
-  const goalTotal=plGoals.filter(g=>g.enabled).reduce((sum,g)=>sum+(Number(g.weight)||0),0);
-  if(goalTotal!==100){
-    showAdminToast(`参与评分目标权重之和必须等于100，当前为${goalTotal}`,'error');
-    return;
+  const plan=planRecords.find(p=>p.id===activePreviewPlanId&&!p.deleted)||planRecords[0];
+  if(plan){
+    plan.scriptRule=document.querySelector('input[name="mgScriptRule"]:checked')?.value||'free_points';
   }
   showAdminToast('保存成功','success');
 }
@@ -1144,82 +1300,119 @@ function pickPlanTemplate(id){
   const row=document.getElementById('planTplOpt_'+id);
   if(row){row.classList.add('selected');row.querySelector('input').checked=true}
 }
-function syncPlanGoalsFromTemplate(record){
-  const src=(record&&record.nodes&&record.nodes.length)?record.nodes:(record&&record.mode==='free'?sampleNodes:[]);
-  if(record&&record.mode==='free'&&src.length){
-    plGoals.splice(0,plGoals.length,...src.map((n,i)=>({
-      id:i+1,
-      name:(n.learnerGoal||`目标${i+1}`).replace(/[。；;]$/,''),
-      desc:n.learnerGoal||'',
-      weight:Math.floor(100/src.length)+(i<100%src.length?1:0),
-      enabled:true
-    })));
-  }
-}
 function confirmPlanTemplate(){
   if(!plPickedTemplateId){alert('请选择陪练模板');return}
   const record=templateRecords.find(r=>r.id===plPickedTemplateId);if(!record)return;
   plCreateTemplateId=record.id;
   plCreateTemplate=record.mode;
-  syncPlanGoalsFromTemplate(record);
   closePlanTemplateModal();
-  document.getElementById('plCreateTpl').innerHTML=`<div class="pl-template-selected"><span class="template-name">${esc(record.name)}</span><span class="pl-mode ${record.mode==='free'?'free':'fixed'}">${record.mode==='free'?'自由对话':'固定对话'}</span><button class="btn outline" onclick="openPlanTemplateModal()">更换模板</button></div>`;
+  document.getElementById('plCreateTpl').innerHTML=`<div class="pl-template-selected"><span class="template-name">${esc(record.name)}</span><span class="pl-mode ${record.mode==='free'?'free':'fixed'}">${record.mode==='free'?'自由对话':'固定对话'}</span>${record.mode==='free'?'<span class="mode-restrict">仅支持考核模式</span>':''}<button class="btn outline" onclick="openPlanTemplateModal()">更换模板</button></div>${record.mode==='free'?'<div class="help" style="margin-top:7px">自由对话本期仅在考核模式中使用，练习模式不提供自由对话入口。</div>':''}`;
   renderCreateScore();
 }
 
-function createBaseRows(){
+function createBaseRows(scope='create'){
+  const cls=scope==='manage'?'mg-dim-weight':'pl-plan-w';
+  const inputHandler=scope==='create'?' oninput="updateCreateScoreTotal()"':'';
   return `
-  <tr><td><label class="pl-dim"><input type="checkbox" checked>表达流利</label></td><td class="pl-score-rule">100分：表达自然流畅，几乎没有卡顿、重复或口头禅。<br><span class="small">其余分档沿用现有小鹅通规则。</span></td><td><input class="pl-score-w pl-plan-w" value="10" oninput="updateCreateScoreTotal()"> %</td></tr>
-  <tr><td><label class="pl-dim"><input type="checkbox" checked>表意清晰</label></td><td class="pl-score-rule">根据逻辑、重点及信息组织情况评分。<br><span class="small">评分档位沿用现有规则。</span></td><td><input class="pl-score-w pl-plan-w" value="10" oninput="updateCreateScoreTotal()"> %</td></tr>
-  <tr><td><label class="pl-dim"><input type="checkbox" checked>语速节奏</label></td><td class="pl-score-rule">语速适中：参考现有每分钟150-250字规则。</td><td><input class="pl-score-w pl-plan-w" value="10" oninput="updateCreateScoreTotal()"> %</td></tr>
-  <tr><td><label class="pl-dim"><input type="checkbox" checked>服务态度</label></td><td class="pl-score-rule">根据礼貌、耐心、主动性及处理拒绝情况评分。</td><td><input class="pl-score-w pl-plan-w" value="30" oninput="updateCreateScoreTotal()"> %</td></tr>`;
+  <tr><td><label class="pl-dim"><input type="checkbox" checked>表达流利</label></td><td class="pl-score-rule">100分：表达自然流畅，几乎没有卡顿、重复或口头禅。<br><span class="small">其余分档沿用现有小鹅通规则。</span></td><td><input class="pl-score-w ${cls}" value="10"${inputHandler}> %</td></tr>
+  <tr><td><label class="pl-dim"><input type="checkbox" checked>表意清晰</label></td><td class="pl-score-rule">根据逻辑、重点及信息组织情况评分。<br><span class="small">评分档位沿用现有规则。</span></td><td><input class="pl-score-w ${cls}" value="10"${inputHandler}> %</td></tr>
+  <tr><td><label class="pl-dim"><input type="checkbox" checked>语速节奏</label></td><td class="pl-score-rule">语速适中：参考现有每分钟150-250字规则。</td><td><input class="pl-score-w ${cls}" value="10"${inputHandler}> %</td></tr>
+  <tr><td><label class="pl-dim"><input type="checkbox" checked>服务态度</label></td><td class="pl-score-rule">根据礼貌、耐心、主动性及处理拒绝情况评分。</td><td><input class="pl-score-w ${cls}" value="30"${inputHandler}> %</td></tr>`;
+}
+function equalGoalShares(count){
+  if(!count)return [];
+  const base=Math.floor(100/count),arr=Array(count).fill(base);
+  arr[count-1]+=100-base*count;
+  return arr;
+}
+function getTemplateGoals(templateId){
+  const record=templateRecords.find(r=>r.id===templateId&&!r.deleted);
+  const list=(record?.nodes&&record.nodes.length)?record.nodes:(record?.mode==='free'?sampleNodes:[]);
+  return list.map((n,i)=>({index:i+1,text:(n.learnerGoal||`目标${i+1}`).trim()}));
+}
+function scriptConsistencyRow(templateMode='fixed',scope='create',weight){
+  const isManage=scope==='manage';
+  const cls=isManage?'mg-dim-weight':'pl-plan-w';
+  const handler=isManage?'':' oninput="updateCreateScoreTotal()"';
+  const group=isManage?'mgScriptRule':'plScriptRule';
+  const wt=weight??(templateMode==='free'?20:40);
+  const rule=templateMode==='free'
+    ?`<label class="radio-item" style="display:flex;margin-bottom:7px"><input type="radio" name="${group}" value="free_points" checked>按照当前目标下标准话术的要点表达即可</label>
+      <label class="radio-item" style="display:flex;margin-bottom:5px"><input type="radio" name="${group}" value="free_semantic">与当前目标下标准话术保持语义高度一致</label>
+      <span class="small">自由对话按目标内完整多轮对话进行判断，不要求学员逐字复述标准话术。</span>`
+    :`<label class="radio-item" style="display:flex;margin-bottom:7px"><input type="radio" name="${group}" value="fixed_points" checked>按照标准话术的要点表达即可</label>
+      <label class="radio-item" style="display:flex;margin-bottom:5px"><input type="radio" name="${group}" value="fixed_exact">与标准话术精准逐字匹配</label>`;
+  return `<tr><td><label class="pl-dim"><input type="checkbox" checked>话术一致性</label></td>
+    <td class="pl-score-rule">${rule}</td>
+    <td><input class="pl-score-w ${cls}" value="${wt}"${handler}> %</td></tr>`;
+}
+function freeGoalShareHtml(templateId,scope='create',savedWeights,savedGoalIndexes){
+  const allGoals=getTemplateGoals(templateId);
+  const included=(savedGoalIndexes&&savedGoalIndexes.length)?new Set(savedGoalIndexes.map(Number)):null;
+  const goals=included?allGoals.filter(g=>included.has(Number(g.index))):allGoals;
+  const weights=(savedWeights&&savedWeights.length===goals.length)?savedWeights:equalGoalShares(goals.length);
+  const cls=scope==='manage'?'mg-goal-share':'pl-goal-share';
+  const totalId=scope==='manage'?'mgGoalShareTotal':'plCreateGoalShareTotal';
+  const handler=`oninput="updateGoalShareTotal('${scope}')"`;
+  const rows=goals.map((g,i)=>`<div class="pl-goal-row" data-goal-index="${g.index}"><div><span class="pl-goal-index">${g.index}</span></div><div><div class="pl-goal-name">${esc(g.text)}</div></div><div><input class="pl-goal-w ${cls}" type="number" min="0" max="100" value="${weights[i]??0}" ${handler}> %</div><div><button type="button" class="pl-goal-remove" onclick="removeGoalScoreRow(this,'${scope}')">删除</button></div></div>`).join('');
+  return `<div class="pl-goals" data-scope="${scope}">
+    <div class="pl-goal-head"><div>序号</div><div>学员任务目标</div><div>目标占比</div><div>操作</div></div>${rows||'<div class="pl-goal-empty">暂无参与评分的目标</div>'}
+  </div>
+  <div class="pl-goal-tools"><span class="help">目标自动读取自陪练模板中的「学员任务目标」，可删除不参与评分的目标</span><span id="${totalId}" class="sum ${goals.length?'ok':'bad'}">目标占比合计：${goals.length?100:0}%</span></div>
+  <div class="pl-info">参与评分目标的占比之和必须等于100%。目标达成度得分按“已完成参与评分目标对应占比之和”计算；支持删减目标，不支持新增目标评分项。</div>`;
+}
+function removeGoalScoreRow(btn,scope='create'){
+  const row=btn.closest('.pl-goal-row');
+  const wrap=row?.parentElement;
+  if(!row||!wrap)return;
+  row.remove();
+  if(!wrap.querySelector('.pl-goal-row')){
+    const empty=document.createElement('div');empty.className='pl-goal-empty';empty.textContent='暂无参与评分的目标';wrap.appendChild(empty);
+  }
+  updateGoalShareTotal(scope);
+}
+function getGoalScoreIndexes(scope='create'){
+  const root=scope==='manage'?'#mgScore':'#plCreate';
+  return [...document.querySelectorAll(`${root} .pl-goal-row`)].map(row=>Number(row.dataset.goalIndex)).filter(Boolean);
+}
+function getGoalShareTotal(scope='create'){
+  const selector=scope==='manage'?'#mgScore .mg-goal-share':'#plCreate .pl-goal-share';
+  return [...document.querySelectorAll(selector)].reduce((s,x)=>s+(Number(x.value)||0),0);
+}
+function updateGoalShareTotal(scope='create'){
+  const total=getGoalShareTotal(scope);
+  const el=document.getElementById(scope==='manage'?'mgGoalShareTotal':'plCreateGoalShareTotal');
+  if(!el)return;
+  el.textContent=`目标占比合计：${total}%`;
+  el.className='sum '+(total===100?'ok':'bad');
 }
 function renderCreateScore(){
-  let special='';
+  let html='';
   if(plCreateTemplate==='free'){
-    special=`<tr><td><label class="pl-dim"><input type="checkbox" checked>目标达成度</label></td>
-    <td class="pl-score-rule"><b>参与评分目标</b> <span class="small">已同步自自由对话模板中的「学员任务目标」</span>
-      <div class="pl-goals"><div class="pl-goal-head"><div>参与</div><div>学员任务目标</div><div>目标权重</div></div><div id="plCreateGoalRows"></div></div>
-      <div class="pl-goal-tools"><span class="small">取消勾选的目标不参与评分</span><span id="plCreateGoalSum" class="sum"></span></div>
-      <div class="pl-info">分支场景下，仅计算本次实际经过的目标节点；未经过的分支目标不参与本次评分，实际经过目标按配置权重重新归一化。</div>
-    </td><td><input class="pl-score-w pl-plan-w" value="40" oninput="updateCreateScoreTotal()"> %</td></tr>`;
-    document.getElementById('plCreateScoreBody').innerHTML=createBaseRows()+special;
+    html=scriptConsistencyRow('free','create',20)+createBaseRows('create')+
+      `<tr><td><label class="pl-dim"><input type="checkbox" checked>目标达成度</label></td>
+      <td class="score-fixed-rule">该维度按目标完成覆盖率计分：全部目标均完成时记为100分；若只完成部分，则按实际完成数量占全部目标数量的比例折算。<br>例如：共设置4项目标，完成其中3项，则该维度得分为75分。</td>
+      <td><input class="pl-score-w pl-plan-w" value="20" oninput="updateCreateScoreTotal()"> %</td></tr>`;
   }else{
-    const note=plCreateTemplate==='none'?'<span class="small">选择自由对话模板后，此维度自动切换为「目标达成度」</span>':'';
-    special=`<tr><td><label class="pl-dim"><input type="checkbox" checked>话术一致性</label></td>
-    <td class="pl-score-rule"><label class="radio-item" style="display:flex;margin-bottom:7px"><input type="radio" name="plScriptRule" checked>按照标准话术的要点表达即可</label>
-    <label class="radio-item" style="display:flex;margin-bottom:5px"><input type="radio" name="plScriptRule">与标准话术精准逐字匹配</label>${note}</td>
-    <td><input class="pl-score-w pl-plan-w" value="40" oninput="updateCreateScoreTotal()"> %</td></tr>`;
-    document.getElementById('plCreateScoreBody').innerHTML=special+createBaseRows();
+    html=scriptConsistencyRow('fixed','create',40)+createBaseRows('create');
+    if(plCreateTemplate==='none'){
+      html=html.replace('与标准话术精准逐字匹配</label>','与标准话术精准逐字匹配</label><span class="small">选择自由对话模板后，将在保留「话术一致性」的基础上新增「目标达成度」评分维度。</span>');
+    }
   }
-  if(plCreateTemplate==='free')renderPlGoalRows('create');
+  document.getElementById('plCreateScoreBody').innerHTML=html;
   updateCreateScoreTotal();
 }
-function renderPlGoalRows(where){
-  const box=document.getElementById(where==='create'?'plCreateGoalRows':'plManageGoalRows');if(!box)return;box.innerHTML='';
-  plGoals.forEach(g=>{const d=document.createElement('div');d.className='pl-goal-row';d.innerHTML=`<div><input type="checkbox" ${g.enabled?'checked':''} onchange="togglePlGoal(${g.id},this.checked,'${where}')"></div><div><div class="pl-goal-name"><span class="pl-goal-index">目标${g.id}</span>${g.name}</div><div class="pl-goal-sub">${g.desc}</div></div><div><input class="pl-goal-w" value="${g.weight}" ${g.enabled?'':'disabled'} oninput="changePlGoalWeight(${g.id},this.value,'${where}')"> %</div>`;box.appendChild(d)});updatePlGoalSum(where)
-}
-function togglePlGoal(id,on,where){const g=plGoals.find(x=>x.id===id);g.enabled=on;if(!on)g.weight=0;renderPlGoalRows(where)}
-function changePlGoalWeight(id,val,where){const g=plGoals.find(x=>x.id===id);g.weight=Math.max(0,Math.min(100,Number(val)||0));updatePlGoalSum(where)}
-function updatePlGoalSum(where){const el=document.getElementById(where==='create'?'plCreateGoalSum':'plManageGoalSum');if(!el)return;const sum=plGoals.filter(g=>g.enabled).reduce((s,g)=>s+g.weight,0);el.textContent='目标权重合计：'+sum+'%';el.className='sum '+(sum===100?'ok':'bad')}
 function updateCreateScoreTotal(){const total=[...document.querySelectorAll('#plCreate .pl-plan-w')].reduce((s,x)=>s+Number(x.value||0),0);const el=document.getElementById('plCreateTotal');el.textContent='评分维度权重合计：'+total+'%';el.style.color=total===100?'#00a870':'#f53f3f'}
 function saveCreatedPlan(){
   if(plCreateTemplate==='none'||!plCreateTemplateId){alert('请先选择陪练模板');return}
   const total=[...document.querySelectorAll('#plCreate .pl-plan-w')].reduce((s,x)=>s+Number(x.value||0),0);
   if(total!==100){showAdminToast(`评分维度权重之和必须等于100，当前为${total}`,'error');return}
-  if(plCreateTemplate==='free'){
-    const s=plGoals.filter(g=>g.enabled).reduce((a,b)=>a+b.weight,0);
-    if(s!==100){
-      showAdminToast(`参与评分目标权重之和必须等于100，当前为${s}`,'error');
-      return;
-    }
-  }
   const name=(document.getElementById('plCreateName').value||'').trim() || `新建陪练计划${planRecords.filter(x=>x.id.startsWith('plan_new_')).length+1}`;
   const intro=(document.getElementById('plCreateIntro').value||'').trim() || 'AI陪练自由对话练习';
   const practiceMode=document.querySelector('input[name="createPracticeMode"]:checked')?.value||'voice';
   const standardParts=[];
-  if(document.getElementById('plCreatePracticeCheck')?.checked)standardParts.push('完成练习1次');
-  if(document.getElementById('plCreateScoreCheck')?.checked)standardParts.push('评分达到60分以上');
+  if(document.getElementById('plCreatePracticeCheck')?.checked)standardParts.push(`完成练习${Math.max(1,Number(document.getElementById('plCreatePracticeNum')?.value)||1)}次`);
+  if(document.getElementById('plCreateScoreCheck')?.checked)standardParts.push(`评分达到${Math.max(0,Number(document.getElementById('plCreateScoreNum')?.value)||60)}分以上`);
   const completionStandard=standardParts.length?standardParts.join('或'):'暂未设置完成标准';
   plSavedCommentOn=plCreateCommentOn;
   const newId='plan_new_'+Date.now();
@@ -1238,7 +1431,8 @@ function saveCreatedPlan(){
     practiceMode,
     commentOn:plCreateCommentOn,
     completionStandard,
-    goalWeights:JSON.parse(JSON.stringify(plGoals))
+    scriptRule:document.querySelector('input[name="plScriptRule"]:checked')?.value||'fixed_points',
+    roleId:selectedPlanRoleId,
   });
   activePreviewPlanId=newId;
   renderPlanList();
@@ -1260,16 +1454,29 @@ function renderManageViews(){
   document.getElementById('mgSetting').innerHTML=`<div class="pl-section-h">陪练设置</div>
     <div class="pl-form-row"><div class="pl-form-label">点评模式</div><div class="pl-inline"><span class="pl-switch locked ${plSavedCommentOn?'on':''}"></span><span class="help">${plSavedCommentOn?'开启':'关闭'}　计划创建后不可修改</span></div></div>
     <div class="pl-form-row"><div class="pl-form-label">陪练方式</div><div><label class="radio-item"><input type="radio" name="managePracticeMode" value="voice" checked>语音</label><label class="radio-item"><input type="radio" name="managePracticeMode" value="text">文字</label></div></div>
-    <div class="pl-form-row"><div class="pl-form-label">陪练模板</div><div><div class="pl-template-selected"><span class="template-name">锅圈 · 火锅需求了解</span><span class="pl-mode free">自由对话</span><span class="help">4个目标节点</span></div></div></div>
+    <div class="pl-form-row"><div class="pl-form-label">陪练模板</div><div><div class="pl-template-selected"><span class="template-name">锅圈 · 火锅需求了解</span><span class="pl-mode free">自由对话</span><span class="mode-restrict">仅支持考核模式</span><span class="help">4个目标节点</span></div><div class="help" style="margin-top:7px">自由对话本期不支持练习模式。</div></div></div>
     <div class="pl-form-row"><div class="pl-form-label">陪练角色</div><div><div class="pl-role-card"><div class="pl-avatar">顾客</div><div><b>锅圈 · 顾客女士</b><div class="help">性格：沟通态度友好积极　年龄：33岁女性</div></div></div></div></div>
     <div class="pl-form-row"><div class="pl-form-label">学习资料</div><div><button class="btn outline">＋ 添加资料</button></div></div>`;
+  const managePlan=planRecords.find(p=>p.id===activePreviewPlanId&&!p.deleted)||planRecords.find(p=>!p.deleted);
+  const manageTemplate=templateRecords.find(t=>t.id===managePlan?.templateId&&!t.deleted)||templateRecords.find(t=>t.id==='tpl_demo_free');
+  const manageIsFree=(manageTemplate?.mode||managePlan?.templateMode)==='free';
+  const manageScript=scriptConsistencyRow(manageIsFree?'free':'fixed','manage',manageIsFree?20:40);
+  const manageTarget=manageIsFree?`<tr><td><label class="pl-dim"><input type="checkbox" checked>目标达成度</label></td>
+    <td class="score-fixed-rule">该维度按目标完成覆盖率计分：全部目标均完成时记为100分；若只完成部分，则按实际完成数量占全部目标数量的比例折算。<br>例如：共设置4项目标，完成其中3项，则该维度得分为75分。</td>
+    <td><input class="pl-score-w mg-dim-weight" value="20"> %</td></tr>`:'';
   document.getElementById('mgScore').innerHTML=`<div class="pl-section-h">评价标准</div><div class="pl-score-wrap" style="margin-left:0"><table class="pl-score"><thead><tr><th class="dim">评分维度</th><th>评分规则</th><th class="wt">权重</th></tr></thead><tbody>
-    ${createBaseRows().replaceAll('pl-plan-w','')}
-    <tr><td><label class="pl-dim"><input type="checkbox" checked>目标达成度</label></td><td class="pl-score-rule"><b>参与评分目标</b> <span class="small">已同步自当前自由对话模板</span><div class="pl-goals"><div class="pl-goal-head"><div>参与</div><div>学员任务目标</div><div>目标权重</div></div><div id="plManageGoalRows"></div></div><div class="pl-goal-tools"><span class="small">取消勾选的目标不参与评分</span><span id="plManageGoalSum" class="sum"></span></div><div class="pl-info">分支场景下，仅计算本次实际经过的目标节点。</div></td><td><input class="pl-score-w mg-dim-weight" value="40"> %</td></tr>
+    ${manageScript}
+    ${createBaseRows('manage')}
+    ${manageTarget}
     </tbody></table></div>
-    <div class="pl-bottom-lines" style="margin-left:0"><div class="pl-mini"><div>扣分规则：</div><div>每出现一次违禁词，扣 <input class="pl-score-w" value="5"> 分</div></div><div class="pl-mini"><div>完成标准：</div><div>☑ 练习次数 ≥ 1　☑ 评分 ≥ 60</div></div></div>`;
-  renderPlGoalRows('manage');
-  document.querySelectorAll('#mgScore .pl-score tbody tr td:last-child .pl-score-w').forEach(x=>x.classList.add('mg-dim-weight'));
+    <div class="pl-bottom-lines" style="margin-left:0">
+      <div class="pl-mini"><div>扣分规则</div><div>每出现一次违禁词，扣 <input class="pl-score-w" value="5"> 分</div></div>
+      <div class="pl-mini"><div>违禁词</div><div><div id="mgForbiddenBox" class="pl-rule-tagbox"><span class="pl-rule-chip">随便看看吧<button onclick="removePlanForbiddenChip(this)">×</button></span><span class="pl-rule-chip">喝了保证降三高<button onclick="removePlanForbiddenChip(this)">×</button></span><span class="pl-rule-chip">别家的茶都是次品<button onclick="removePlanForbiddenChip(this)">×</button></span><span class="pl-rule-chip">能治胃病<button onclick="removePlanForbiddenChip(this)">×</button></span><span class="pl-rule-chip">网上卖的都是假货<button onclick="removePlanForbiddenChip(this)">×</button></span><input placeholder="输入关键词后回车添加" onkeydown="addPlanForbiddenWord(event,'mgForbiddenBox')"></div></div></div>
+      <div class="pl-mini"><div>完成标准</div><div class="pl-completion-wrap">
+        <label class="pl-completion-line"><input id="mgPracticeCheck" type="checkbox" checked onchange="toggleCompletionInput('mgPracticeCheck','mgPracticeNum')"><span>练习次数 ≥</span><input id="mgPracticeNum" class="pl-completion-num" type="number" min="1" value="1"></label>
+        <label class="pl-completion-line"><input id="mgScoreCheck" type="checkbox" onchange="toggleCompletionInput('mgScoreCheck','mgScoreNum')"><span>评分 ≥</span><input id="mgScoreNum" class="pl-completion-num" type="number" min="0" max="100" value="60" disabled></label>
+      </div></div>
+    </div>`;
   document.getElementById('mgUsers').innerHTML=`<div class="pl-section-h">用户列表</div><div class="pl-inline" style="justify-content:flex-end;margin-bottom:12px"><button class="btn outline">导出</button><input class="pl-input" style="width:220px" placeholder="搜索昵称"></div><table class="pl-user-table"><thead><tr><th>用户</th><th>账号</th><th>部门</th><th>是否完成</th><th>练习次数</th><th>最近一次评分</th><th>平均分</th><th>最高得分</th><th>操作</th></tr></thead><tbody>
     <tr><td>锅圈毛老师</td><td>guoquan</td><td>企学院-非集成-5342</td><td>否</td><td>0</td><td>0</td><td>0.0</td><td>0</td><td><span class="pl-op">详细数据</span></td></tr>
     <tr><td>测试</td><td>111</td><td>企学院-非集成-5342</td><td>否</td><td>0</td><td>0</td><td>0.0</td><td>0</td><td><span class="pl-op">详细数据</span></td></tr></tbody></table>`;
@@ -1362,6 +1569,8 @@ if(templateRecords.find(r=>r.id==='tpl_demo_free')&&!templateRecords.find(r=>r.i
 activePreviewPlanId=planRecords[0]?.id||'plan_demo_1';
 renderTemplateList();
 renderPlanList();
+renderRoleLibrary();
+renderSpeechLibrary();
 
 const c2State={
   screen:'detail',
@@ -1377,6 +1586,7 @@ const c2State={
   feedbackOn:true,
   goalModal:false,
   failOpen:false,
+  goalResultType:'incomplete',
   endOpen:false,
   reportOpen:false,
   goalDetailOpen:false,
@@ -1388,8 +1598,8 @@ function c2GetActivePlan(){
   const liveCreate=document.getElementById('plCreate')?.classList.contains('active');
   if(liveCreate&&plCreateTemplateId){
     const parts=[];
-    if(document.getElementById('plCreatePracticeCheck')?.checked)parts.push('完成练习1次');
-    if(document.getElementById('plCreateScoreCheck')?.checked)parts.push('评分达到60分以上');
+    if(document.getElementById('plCreatePracticeCheck')?.checked)parts.push(`完成练习${Math.max(1,Number(document.getElementById('plCreatePracticeNum')?.value)||1)}次`);
+    if(document.getElementById('plCreateScoreCheck')?.checked)parts.push(`评分达到${Math.max(0,Number(document.getElementById('plCreateScoreNum')?.value)||60)}分以上`);
     return {
       id:'preview_create',
       name:(document.getElementById('plCreateName')?.value||'').trim()||'未保存陪练计划预览',
@@ -1397,7 +1607,8 @@ function c2GetActivePlan(){
       templateId:plCreateTemplateId,
       templateMode:plCreateTemplate,
       practiceMode:document.querySelector('input[name="createPracticeMode"]:checked')?.value||'voice',
-      completionStandard:parts.length?parts.join('或'):'暂未设置完成标准'
+      completionStandard:parts.length?parts.join('或'):'暂未设置完成标准',
+      scriptRule:document.querySelector('input[name="plScriptRule"]:checked')?.value||'free_points'
     }
   }
   return planRecords.find(p=>p.id===activePreviewPlanId&&!p.deleted)
@@ -1420,7 +1631,7 @@ function c2LoadFromB(){
   c2State.screen='detail';c2State.goalIndex=0;c2State.round=0;c2State.turns=[];
   c2State.goalStatuses=c2State.nodes.map((_,i)=>i===0?'current':'pending');
   c2State.scrollIntent='preserve';
-  c2State.scriptOpen=false;c2State.goalModal=false;c2State.failOpen=false;c2State.endOpen=false;c2State.reportOpen=false;c2State.goalDetailOpen=false;c2State.toast='';
+  c2State.scriptOpen=false;c2State.goalModal=false;c2State.failOpen=false;c2State.goalResultType='incomplete';c2State.endOpen=false;c2State.reportOpen=false;c2State.goalDetailOpen=false;c2State.toast='';
   c2SyncSide();
 }
 function c2SyncSide(){
@@ -1455,13 +1666,7 @@ function c2IsGoalComplete(){
   return c2State.round>=1;
 }
 function c2GoalFailureReason(i,n){
-  const reasons=[
-    '你已经确认了部分基础需求，但还没有完整确认顾客的用餐人数。',
-    '你已经了解了部分口味信息，但还没有完整确认辣度偏好及同行情况。',
-    '你已经进行了底料介绍，但还没有引导顾客完成明确的底料选择。',
-    '你已经介绍了部分内容，但底料使用方法或关联商品推荐仍不完整。'
-  ];
-  return reasons[i]||`本轮尚未完整完成「${n?.learnerGoal||'当前训练目标'}」。`;
+  return (n?.failFeedback||'').trim();
 }
 function c2FeedbackHtml(turn){
   if(!c2State.feedbackOn)return '';
@@ -1481,7 +1686,7 @@ function c2TurnHtml(t){
     if(t.status==='failed'){
       return `<div class="c2-goal-transition"><div class="inner failed">
         <div class="notice-title">⚠ 当前目标未完成</div>
-        <div class="notice-reason">${esc(t.reason||'本轮尚未完整完成当前训练目标。')}</div>
+        ${t.reason?`<div class="notice-reason">${esc(t.reason)}</div>`:''}
         <div class="notice-next">${esc(t.nextText||'即将进入下一目标')}</div>
       </div></div>`;
     }
@@ -1502,24 +1707,26 @@ function c2Render(){
   body.innerHTML=c2State.screen==='detail'?c2DetailHtml():c2State.screen==='result'?c2ResultHtml():c2PracticeHtml();
   c2SyncSide();
 
-  requestAnimationFrame(()=>{
-    const s=document.getElementById('c2ChatScroll');
-    if(s){
-      if(intent==='bottom'){
-        s.scrollTo({top:s.scrollHeight,behavior:'smooth'});
-      }else if(oldScroll){
-        if(wasNearBottom){
-          s.scrollTop=Math.max(0,s.scrollHeight-s.clientHeight);
-        }else{
-          s.scrollTop=Math.min(oldTop,Math.max(0,s.scrollHeight-s.clientHeight));
-        }
+  // V48：重渲染后立即恢复聊天区滚动位置，避免先回到顶部再跳回底部造成页面抖动。
+  const s=document.getElementById('c2ChatScroll');
+  if(s){
+    if(intent==='bottom'){
+      s.scrollTop=s.scrollHeight;
+    }else if(oldScroll){
+      if(wasNearBottom){
+        s.scrollTop=Math.max(0,s.scrollHeight-s.clientHeight);
+      }else{
+        s.scrollTop=Math.min(oldTop,Math.max(0,s.scrollHeight-s.clientHeight));
       }
     }
-    c2State.scrollIntent='preserve';
-  });
+  }
+  c2State.scrollIntent='preserve';
 }
 function c2DetailHtml(){
   const p=c2State.plan,t=c2State.template;
+  const practiceText=p.practiceMode==='text'?'文字':'语音';
+  const period=(p.start&&p.end&&p.start!=='--'&&p.end!=='--')?`${p.start} 至 ${p.end}`:'长期有效';
+  const standard=p.completionStandard||'暂未设置完成标准';
   return `<div class="c2-head"><button onclick="switchTop('b')">‹ 返回</button><span>陪练详情</span><button>⋯</button></div>
     <div class="c2-scroll">
       <div class="c2-detail-hero"><div class="c2-avatar">👩🏻</div></div>
@@ -1527,16 +1734,24 @@ function c2DetailHtml(){
         <div class="c2-title">${esc(p.name||'AI陪练')}</div>
         <span class="c2-tag">${t.mode==='free'?'自由对话模式':'固定对话模式'}</span>
         <div class="c2-detail-block"><b>陪练场景</b><p>${esc(p.intro||'AI陪练场景')}</p></div>
-        <div class="c2-detail-block"><b>训练内容</b><p>共 ${c2State.nodes.length} 个目标节点。自由模式下，同一目标内可连续进行多轮对话，目标完成后再进入下一目标。</p></div>
-        ${t.mode==='free'?`<div class="c2-goals-intro"><div class="c2-goals-intro-title">本次训练目标</div>${c2State.nodes.map((n,i)=>`<div class="c2-intro-goal"><span class="idx">${i+1}</span><span class="txt">${esc(n.learnerGoal||'暂未配置目标')}</span></div>`).join('')}</div>`:''}
+        <div class="c2-detail-block"><b>计划信息</b>
+          <div class="c2-plan-info"><span>有效期</span><em>${esc(period)}</em></div>
+          <div class="c2-plan-info"><span>陪练方式</span><em>${esc(practiceText)}</em></div>
+          <div class="c2-plan-info"><span>陪练模板</span><em>${esc(t.name||'—')}</em></div>
+          <div class="c2-plan-info"><span>陪练角色</span><em>${(()=>{const r=roleRecords.find(x=>x.id===p.roleId);return r?esc(r.name):'未配置'})()}</em></div>
+          <div class="c2-plan-info"><span>完成标准</span><em>${esc(standard)}</em></div>
+        </div>
+        <div class="c2-detail-block"><b>训练说明</b><p>${t.mode==='free'?'围绕陪练场景与 AI 进行多轮沟通，完成后生成考核结果。':'按照模板配置的问答流程完成陪练。'}</p></div>
       </div>
     </div>
-    <div class="c2-detail-foot"><button class="c2-main-btn" onclick="c2StartPractice()">开始练习模式</button><button class="c2-sub-btn" onclick="c2StartPractice(true)">真实场景模拟</button><div class="c2-disclaimer">练习模式支持标准话术与改进建议</div></div>`;
+    ${t.mode==='free'
+      ?`<div class="c2-detail-foot"><button class="c2-main-btn" onclick="c2StartPractice(true)">考核模式</button><div class="c2-disclaimer">自由对话本期仅支持考核模式，练习模式暂不支持</div></div>`
+      :`<div class="c2-detail-foot"><button class="c2-main-btn" onclick="c2StartPractice(false)">开始练习模式</button><button class="c2-sub-btn" onclick="c2StartPractice(true)">考核模式</button><div class="c2-disclaimer">练习模式支持标准话术与改进建议</div></div>`}`;
 }
 function c2PracticeHtml(){
   const n=c2Node(),pct=c2Pct(),isDone=!n;
   const customer=isDone?'':c2CustomerText();
-  return `<div class="c2-head"><button onclick="c2State.endOpen=true;c2Render()">◔ 结束</button><span class="c2-mode">${c2State.realMode?'真实场景模拟':'练习模式'}</span><button class="target-btn" onclick="c2State.goalModal=true;c2Render()">目标</button></div>
+  return `<div class="c2-head"><button onclick="c2State.endOpen=true;c2Render()">◔ 结束</button><span class="c2-mode">${c2State.realMode?'考核模式':'练习模式'}${c2State.template?.mode==='free'?' · 自由对话':''}</span><button class="target-btn" onclick="c2State.goalModal=true;c2Render()">目标</button></div>
     <div class="c2-progress"><b>练习进度</b><div class="c2-track"><i style="width:${pct}%"></i></div><span class="c2-pct">${pct}%</span></div>
     <div class="c2-scene"><details><summary>练习场景</summary><p>${esc(c2State.plan.intro||'AI陪练场景')}</p></details></div>
     <div class="c2-scroll" id="c2ChatScroll"><div class="c2-chat">${c2State.turns.map(c2TurnHtml).join('')}
@@ -1548,62 +1763,42 @@ function c2PracticeHtml(){
       <button class="c2-record" onclick="${isDone?'c2FinishSession()':'c2Answer()'}">${isDone?'查看本次结果':'🎙 按住说话'}</button>
       ${!c2State.realMode?`<button class="c2-aux ${c2State.feedbackOn?'on':''}" onclick="c2State.feedbackOn=!c2State.feedbackOn;c2Render()"><span class="ico">🅰</span>改进建议</button>`:''}
     </div><div class="c2-disclaimer">内容由AI生成，仅供参考</div></div>
-    ${c2State.goalModal?c2GoalModalHtml():''}${c2State.failOpen?c2FailHtml():''}${c2State.endOpen?c2EndHtml():''}${c2State.reportOpen?c2ReportHtml():''}${c2State.toast?`<div class="c2-toast">${esc(c2State.toast)}</div>`:''}`;
+    ${c2State.goalModal?c2GoalModalHtml():''}${c2State.failOpen?c2GoalResultHtml():''}${c2State.endOpen?c2EndHtml():''}${c2State.reportOpen?c2ReportHtml():''}${c2State.toast?`<div class="c2-toast">${esc(c2State.toast)}</div>`:''}`;
 }
 function c2GoalModalHtml(){
-  const labels={done:'已完成',current:'进行中',pending:'未开始',failed:'未完成'};
-  const items=c2State.nodes.map((node,i)=>{
-    let status=c2State.goalStatuses[i]||'pending';
-    if(i===c2State.goalIndex&&status==='pending')status='current';
-    return `<div class="c2-goal-item">
-      <div class="row"><span class="name">目标${i+1}　${esc(node.learnerGoal||'暂未配置学员任务目标')}</span><span class="c2-goal-status ${status}">${labels[status]}</span></div>
-      ${status==='current'?`<div class="desc">当前正在练习此目标</div>`:''}
-    </div>`;
-  }).join('');
-  return `<div class="c2-mask"><div class="c2-goal-modal"><h3>练习目标</h3>
-    <div class="c2-goal-label">目标完成情况</div>
-    <div class="c2-goal-list">${items}</div>
-    <div class="c2-divider"></div>
-    <div class="c2-goal-label" style="text-align:center">完成标准</div>
-    <div class="c2-standard">${esc(c2State.plan.completionStandard||'暂未设置完成标准')}</div>
-    <button class="c2-modal-btn" onclick="c2State.goalModal=false;c2Render()">知道了</button>
+  const standard=c2State.plan.completionStandard||'暂未设置完成标准';
+  return `<div class="c2-mask"><div class="c2-goal-modal original-goal-modal">
+    <h3>完成标准</h3>
+    <div class="c2-standard original-standard">完成标准：${esc(standard)}</div>
+    <button class="original-goal-close" onclick="c2State.goalModal=false;c2Render()">知道了</button>
   </div></div>`;
 }
 function c2EndHtml(){
-  return `<div class="c2-mask"><div class="c2-end-modal"><h3>结束本次练习？</h3><p style="color:#596575;line-height:1.7">结束后将根据当前已完成的对话生成本次练习结果。</p><button class="c2-modal-btn" onclick="c2FinishSession()">确认结束</button><button class="c2-modal-btn secondary" onclick="c2State.endOpen=false;c2Render()">继续练习</button></div></div>`;
+  const exam=c2State.template?.mode==='free'||c2State.realMode;
+  return `<div class="c2-mask"><div class="c2-end-modal"><h3>${exam?'结束本次考核？':'结束本次练习？'}</h3><p style="color:#596575;line-height:1.7">结束后将根据当前已完成的对话生成本次${exam?'考核':'练习'}结果。</p><button class="c2-modal-btn" onclick="c2FinishSession()">确认结束</button><button class="c2-modal-btn secondary" onclick="c2State.endOpen=false;c2Render()">继续练习</button></div></div>`;
 }
 function c2ResultHtml(){
-  return `<div class="c2-result"><div class="c2-result-card"><div class="c2-hand">🤝</div><h2>练习已结束</h2><div class="c2-duration">03'26"</div><div class="c2-duration-label">本次练习时长</div><button class="c2-main-btn" onclick="c2ShowReport()">查看评分报告</button><button class="c2-sub-btn" onclick="c2Reset()">再练一次</button></div></div>${c2State.reportOpen?c2ReportHtml():''}`;
+  const exam=c2State.template?.mode==='free'||c2State.realMode;
+  return `<div class="c2-result"><div class="c2-result-card"><div class="c2-hand">🤝</div><h2>${exam?'考核已结束':'练习已结束'}</h2><div class="c2-duration">03'26"</div><div class="c2-duration-label">本次练习时长</div><button class="c2-main-btn" onclick="c2ShowReport()">查看评分报告</button><button class="c2-sub-btn" onclick="c2Reset()">再练一次</button></div></div>${c2State.reportOpen?c2ReportHtml():''}`;
 }
 function c2ReportHtml(){
+  const scriptScore=88;
   const detailItems=[
+    ['话术一致性',scriptScore,'自由对话按当前目标下的完整多轮对话与标准话术进行语义评估，重点判断是否覆盖关键表达要点。'],
     ['表达流利',80,'表达整体流畅，逻辑清晰，但存在少量口语化重复，不影响理解。'],
     ['表意清晰',85,'回答逻辑清晰，能够准确传达信息，但在部分场景下重点还可以更加突出。'],
     ['语速节奏',100,'语速自然适中，信息密度合理，节奏感良好，便于客户消化关键信息。'],
     ['服务态度',80,'态度友好耐心，积极回应客户顾虑，体现了服务意识，但结尾礼仪仍可更加完整。']
   ];
-  const targetScore=86;
-  const targetComment='本次练习共涉及4个目标，完成3个。大部分目标完成较好，但在个别目标的深度引导上仍有提升空间。';
+  const totalTargets=Math.max(1,c2State.nodes.length);
+  const completedTargets=c2State.goalStatuses.filter(x=>x==='done').length;
+  const targetScore=Math.round(completedTargets/totalTargets*100);
+  const targetComment=`本次模板共配置 ${totalTargets} 个目标，学员完成 ${completedTargets} 个，按已完成目标数占目标总数的比例计算，目标达成度为 ${targetScore} 分。`;
+  const overallScore=Math.round(scriptScore*0.20+80*0.10+85*0.10+100*0.10+80*0.30+targetScore*0.20);
+  const radarScores=[scriptScore,80,85,100,80,targetScore];
+  const radarAngles=[-90,-30,30,90,150,210];
+  const radarPts=radarScores.map((v,i)=>{const a=radarAngles[i]*Math.PI/180,r=105*v/100;return `${(Math.cos(a)*r).toFixed(1)},${(Math.sin(a)*r).toFixed(1)}`}).join(' ');
 
-  const goalRows=c2State.nodes.map((n,i)=>{
-    const st=c2State.goalStatuses[i]||'pending';
-    const done=st==='done';
-    const statusText=done?'已完成':'未完成';
-    const score=done?[90,85,88,88][i]||88:55;
-    const desc=done
-      ? ['能够准确确认顾客用餐类型、人数及用餐场景，信息获取完整。','能够了解顾客的辣度偏好，并关注到儿童同行等特殊场景，沟通自然。','能够围绕顾客需求进行推荐，并推动顾客做出明确选择。','能够说明产品使用方式，并自然进行关联商品推荐，沟通顺畅。'][i]||'当前目标完成较好。'
-      : '已进行相关推荐，但还没有完整覆盖该目标要求的关键信息，也未完成充分引导。';
-    return `<div class="c2-goal-row2">
-      <div class="top">
-        <span class="c2-goal-dot ${done?'done':'failed'}">${done?'✓':'×'}</span>
-        <span class="name">目标${i+1}　${esc(n.learnerGoal||'')}</span>
-        <span class="c2-goal-badge ${done?'done':'failed'}">${statusText}</span>
-        <span class="c2-goal-points">${score}分</span>
-      </div>
-      <p>${desc}</p>
-      ${!done?`<div class="c2-goal-advice"><b>💡 改进建议</b><span>建议继续围绕当前目标补充关键信息，并结合顾客反馈进行更明确的引导，直到顾客做出选择。</span></div>`:''}
-    </div>`;
-  }).join('');
 
   return `<div class="c2-report">
     <div class="c2-report-page">
@@ -1612,7 +1807,7 @@ function c2ReportHtml(){
           <div class="c2-report-title">${esc(c2State.plan.name||'收银环节-会员拉新与充值推荐陪练')}</div>
           <div class="c2-report-meta">2026-09-20 18:56:55<br>轮次15轮，耗时1'35''</div>
         </div>
-        <div class="c2-report-score">82<small>本次评分</small></div>
+        <div class="c2-report-score">${overallScore}<small>本次评分</small></div>
       </div>
 
       <div class="c2-report-tabs">
@@ -1626,20 +1821,21 @@ function c2ReportHtml(){
           <div class="c2-radar-wrap">
             <svg viewBox="0 0 320 300" aria-label="综合能力雷达图">
               <g transform="translate(160,145)" fill="none" stroke="#dfe4ea">
-                <polygon points="0,-105 100,-32 62,85 -62,85 -100,-32"/>
-                <polygon points="0,-80 76,-25 47,65 -47,65 -76,-25"/>
-                <polygon points="0,-55 52,-17 32,45 -32,45 -52,-17"/>
-                <polygon points="0,-30 29,-9 18,24 -18,24 -29,-9"/>
-                <line x1="0" y1="0" x2="0" y2="-105"/><line x1="0" y1="0" x2="100" y2="-32"/><line x1="0" y1="0" x2="62" y2="85"/><line x1="0" y1="0" x2="-62" y2="85"/><line x1="0" y1="0" x2="-100" y2="-32"/>
-                <polygon points="0,-90 86,-28 53,72 -50,69 -86,-28" fill="#1677ff22" stroke="#1677ff" stroke-width="2"/>
-                <polygon points="0,-70 67,-22 42,58 -40,55 -65,-21" stroke="#cfd3d8" stroke-width="2"/>
+                <polygon points="0,-105 90.9,-52.5 90.9,52.5 0,105 -90.9,52.5 -90.9,-52.5"/>
+                <polygon points="0,-80 69.3,-40 69.3,40 0,80 -69.3,40 -69.3,-40"/>
+                <polygon points="0,-55 47.6,-27.5 47.6,27.5 0,55 -47.6,27.5 -47.6,-27.5"/>
+                <polygon points="0,-30 26,-15 26,15 0,30 -26,15 -26,-15"/>
+                <line x1="0" y1="0" x2="0" y2="-105"/><line x1="0" y1="0" x2="90.9" y2="-52.5"/><line x1="0" y1="0" x2="90.9" y2="52.5"/><line x1="0" y1="0" x2="0" y2="105"/><line x1="0" y1="0" x2="-90.9" y2="52.5"/><line x1="0" y1="0" x2="-90.9" y2="-52.5"/>
+                <polygon points="${radarPts}" fill="#1677ff22" stroke="#1677ff" stroke-width="2"/>
+                <polygon points="0,-72 62,-36 64,37 0,76 -58,34 -61,-35" stroke="#cfd3d8" stroke-width="2"/>
               </g>
               <g font-size="12" fill="#2f3540" text-anchor="middle">
-                <text x="160" y="18">表达流利</text><text x="160" y="36" fill="#1677ff">80分</text>
-                <text x="278" y="105">表意清晰</text><text x="278" y="123" fill="#1677ff">85分</text>
-                <text x="235" y="260">语速节奏</text><text x="235" y="278" fill="#1677ff">100分</text>
-                <text x="85" y="260">服务态度</text><text x="85" y="278" fill="#1677ff">80分</text>
-                <text x="42" y="105">目标达成度</text><text x="42" y="123" fill="#1677ff">86分</text>
+                <text x="160" y="16">话术一致性</text><text x="160" y="34" fill="#1677ff">${scriptScore}分</text>
+                <text x="278" y="75">表达流利</text><text x="278" y="93" fill="#1677ff">80分</text>
+                <text x="275" y="225">表意清晰</text><text x="275" y="243" fill="#1677ff">85分</text>
+                <text x="160" y="282">语速节奏</text><text x="160" y="298" fill="#1677ff">100分</text>
+                <text x="45" y="225">服务态度</text><text x="45" y="243" fill="#1677ff">80分</text>
+                <text x="42" y="75">目标达成度</text><text x="42" y="93" fill="#1677ff">${targetScore}分</text>
               </g>
             </svg>
           </div>
@@ -1659,19 +1855,12 @@ function c2ReportHtml(){
           </div>`).join('')}
 
           <div class="c2-detail-item">
-            <div class="c2-detail-head clickable" onclick="c2State.goalDetailOpen=!c2State.goalDetailOpen;c2Render()">
+            <div class="c2-detail-head">
               <span class="c2-detail-line"></span>
               <b>目标达成度</b>
               <span class="c2-detail-score">${targetScore}分</span>
-              <span class="c2-detail-chevron ${c2State.goalDetailOpen?'open':''}">⌄</span>
             </div>
             <p>${targetComment}</p>
-
-            ${c2State.goalDetailOpen?`<div class="c2-goal-expand-wrap">
-              <div class="c2-goal-expand-title">目标达成情况</div>
-              <div class="c2-goal-summary-line">${c2State.nodes.length}个目标，已完成 ${c2State.goalStatuses.filter(x=>x==='done').length||3} 个</div>
-              ${goalRows}
-            </div>`:''}
           </div>
         </div>
 
@@ -1681,8 +1870,9 @@ function c2ReportHtml(){
   </div>`;
 }
 function c2StartPractice(real=false){
+  const freeMode=c2State.template?.mode==='free';
   c2State.screen='practice';
-  c2State.realMode=real;
+  c2State.realMode=freeMode?true:real;
   c2State.goalIndex=0;
   c2State.round=0;
   c2State.turns=[];
@@ -1702,47 +1892,54 @@ function c2Answer(){
   const complete=c2IsGoalComplete();
   c2State.turns.push({customer,answer,node:c2Clone(n),complete});
   c2State.scriptOpen=false;
-
-  if(complete){
-    const doneIdx=c2State.goalIndex;
-    c2State.goalStatuses[doneIdx]='done';
-    c2State.goalIndex++;
-    c2State.round=0;
-
-    if(c2State.goalIndex<c2State.nodes.length){
-      c2State.goalStatuses[c2State.goalIndex]='current';
-      c2State.turns.push({type:'transition',status:'done',text:`✓ 目标${doneIdx+1}已完成，进入目标${c2State.goalIndex+1}`});
-      c2State.toast=`✓ 目标${doneIdx+1}已完成`;
-    }else{
-      c2State.turns.push({type:'transition',status:'done',text:`✓ 目标${doneIdx+1}已完成，本次练习目标已全部完成`});
-      c2State.toast='✓ 本次练习目标已全部完成';
-    }
-    c2State.scrollIntent='bottom';
-    c2Render();
-    setTimeout(()=>{c2State.toast='';c2State.scrollIntent='preserve';c2Render()},1500);
-  }else if(c2State.round>=(n.goalRounds||3)){
-    c2State.failOpen=true;
-    c2State.scrollIntent='preserve';
-    c2Render();
-  }else{
-    c2State.toast='当前目标尚未完成，继续围绕本目标对话';
-    c2State.scrollIntent='bottom';
-    c2Render();
-    setTimeout(()=>{c2State.toast='';c2State.scrollIntent='preserve';c2Render()},1600);
+  if(c2State.template?.mode!=='free'){
+    c2State.goalStatuses[c2State.goalIndex]='done';
+    c2State.goalIndex++;c2State.round=0;
+    if(c2State.goalIndex<c2State.nodes.length)c2State.goalStatuses[c2State.goalIndex]='current';
+    c2State.scrollIntent='bottom';c2Render();return;
   }
+  if(complete){c2State.goalStatuses[c2State.goalIndex]='done';c2State.goalResultType='success';c2State.failOpen=true;c2State.scrollIntent='preserve';c2Render();}
+  else if(c2State.round>=(n.goalRounds||3)){c2State.goalResultType='incomplete';c2State.failOpen=true;c2State.scrollIntent='preserve';c2Render();}
+  else{c2State.toast='当前目标尚未完成，继续围绕本目标对话';c2State.scrollIntent='bottom';c2Render();setTimeout(()=>{c2State.toast='';c2State.scrollIntent='preserve';c2Render()},1600);}
 }
-function c2FailHtml(){
+function c2GoalResultHtml(){
   const n=c2Node();if(!n)return '';
+  const success=c2State.goalResultType==='success';
   const isLast=c2State.goalIndex>=c2State.nodes.length-1;
+  const title=success?'本轮目标已完成':'本轮目标未完成';
+  const message=success
+    ?((n.successFeedback||'').trim())
+    :((n.failFeedback||'').trim());
   return `<div class="c2-mask"><div class="c2-fail-modal">
-    <h3>本轮目标未完成</h3>
-    <p style="color:#596575;line-height:1.75">${esc(c2GoalFailureReason(c2State.goalIndex,n))}</p>
-    <button class="c2-modal-btn" onclick="c2RetryGoal()">重新练习本轮</button>
-    <button class="c2-modal-btn secondary" onclick="c2SkipFailedGoal()">${isLast?'结束练习':'继续下一轮'}</button>
+    <div class="c2-goal-result-icon ${success?'success':'incomplete'}">${success?'✓':'!'}</div>
+    <h3>${title}</h3>
+    ${message?`<p style="color:#596575;line-height:1.75;text-align:center">${esc(message)}</p>`:''}
+    ${success
+      ?`<button class="c2-modal-btn" onclick="c2AdvanceCompletedGoal()">${isLast?'完成本次考核':'进入下一个目标'}</button>`
+      :`<button class="c2-modal-btn" onclick="c2RetryGoal()">重新演练本目标</button><button class="c2-modal-btn secondary" onclick="c2SkipFailedGoal()">${isLast?'结束本次考核':'继续下一个目标演练'}</button>`}
   </div></div>`;
+}
+function c2AdvanceCompletedGoal(){
+  const doneIdx=c2State.goalIndex;
+  c2State.failOpen=false;
+  c2State.goalResultType='incomplete';
+  c2State.goalStatuses[doneIdx]='done';
+  c2State.goalIndex++;
+  c2State.round=0;
+  if(c2State.goalIndex<c2State.nodes.length){
+    c2State.goalStatuses[c2State.goalIndex]='current';
+    c2State.turns.push({type:'transition',status:'done',text:`✓ 目标${doneIdx+1}已完成，进入目标${c2State.goalIndex+1}`});
+    c2State.toast=`已进入目标${c2State.goalIndex+1}`;
+    c2State.scrollIntent='bottom';
+    c2Render();
+    setTimeout(()=>{c2State.toast='';c2Render()},1200);
+  }else{
+    c2FinishSession();
+  }
 }
 function c2RetryGoal(){
   c2State.failOpen=false;
+  c2State.goalResultType='incomplete';
   c2State.round=0;
   c2State.scriptOpen=false;
   c2State.goalStatuses[c2State.goalIndex]='current';
@@ -1754,6 +1951,7 @@ function c2RetryGoal(){
 function c2SkipFailedGoal(){
   const failedIdx=c2State.goalIndex;
   c2State.failOpen=false;
+  c2State.goalResultType='incomplete';
   c2State.goalStatuses[failedIdx]='failed';
   c2State.goalIndex++;
   c2State.round=0;
@@ -1775,9 +1973,11 @@ function c2SkipFailedGoal(){
   }
 }
 function c2ShowFail(){
+  if(c2State.template?.mode!=='free'){c2State.toast='固定对话模式不按轮次展示目标结果弹窗';c2Render();setTimeout(()=>{c2State.toast='';c2Render()},1200);return}
   if(c2State.screen!=='practice'){c2StartPractice(false);return}
   const n=c2Node();if(!n)return;
   c2State.round=n.goalRounds||3;
+  c2State.goalResultType='incomplete';
   c2State.failOpen=true;
   c2Render();
 }
