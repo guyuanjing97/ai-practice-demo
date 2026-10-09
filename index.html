@@ -478,21 +478,25 @@ button,input,textarea,select{font:inherit}button{cursor:pointer}
 
 /* V50：补齐现网话术库 / AI角色库，并联动陪练角色 */
 .lib-page{display:none;background:#fff;min-height:700px;padding:0 18px 28px}.lib-page.active{display:block}.lib-tabs{display:flex;gap:28px;border-bottom:1px solid #edf0f3;height:52px;align-items:end}.lib-tabs .tab{padding:0 4px 14px;cursor:pointer;color:#4b5563}.lib-tabs .tab.active{color:#1677ff;border-bottom:2px solid #1677ff}.role-toolbar,.speech-toolbar{display:flex;align-items:center;gap:10px;padding:22px 0}.role-grid{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:14px}.role-card{border:1px solid #e3e8ef;border-radius:6px;padding:14px;min-height:118px;position:relative;background:#fff}.role-card-head{display:flex;gap:12px;align-items:center}.role-avatar{width:58px;height:58px;border-radius:4px;background:linear-gradient(145deg,#eaf1ff,#f7e7e1);display:flex;align-items:center;justify-content:center;font-size:30px}.role-name{font-weight:600}.role-age{color:#8a94a3;font-size:12px;margin-left:6px}.role-actions{position:absolute;right:12px;top:12px;color:#1677ff;font-size:12px}.role-tagline{margin:10px 0 6px;background:#eafaf7;color:#32a58b;padding:4px 8px;border-radius:2px;font-size:12px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}.role-desc{color:#677281;font-size:12px;line-height:1.6;display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden}.speech-layout{display:grid;grid-template-columns:230px 1fr;min-height:650px}.speech-side{border-right:1px solid #edf0f3;padding:18px 14px 0 0}.speech-side-head{display:flex;justify-content:space-between;align-items:center;margin-bottom:14px}.speech-lib-list{display:flex;flex-direction:column;gap:3px;margin-top:10px}.speech-lib-item{padding:9px 10px;border-radius:4px;cursor:pointer;font-size:13px}.speech-lib-item.active{background:#edf4ff;color:#1677ff}.speech-main{padding:18px}.speech-notice{border:1px solid #91caff;background:#e6f4ff;color:#49657f;padding:9px 12px;border-radius:2px;font-size:12px}.speech-search{margin-left:auto;width:220px}.speech-actions{color:#1677ff;white-space:nowrap}.role-select-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:10px;max-height:420px;overflow:auto}.role-select-card{border:1px solid #dce2ea;border-radius:6px;padding:10px;cursor:pointer}.role-select-card.selected{border-color:#1677ff;box-shadow:0 0 0 1px #1677ff inset}.role-select-card .mini{display:flex;gap:8px;align-items:center}.role-select-card .mini .role-avatar{width:42px;height:42px;font-size:22px}.selected-role-pill{display:inline-flex;align-items:center;gap:10px;border:1px solid #dce2ea;border-radius:6px;padding:9px 12px}.selected-role-pill .role-avatar{width:38px;height:38px;font-size:20px}.lib-drawer-mask{position:fixed;inset:0;background:#0006;z-index:120;display:none}.lib-drawer-mask.show{display:block}.lib-drawer{position:absolute;right:0;top:0;bottom:0;width:620px;background:#fff;box-shadow:-8px 0 25px #0002;display:flex;flex-direction:column}.lib-drawer-h{padding:18px 22px;border-bottom:1px solid #eee;font-weight:600;display:flex;justify-content:space-between}.lib-drawer-body{padding:22px;overflow:auto;flex:1}.lib-field{display:grid;grid-template-columns:90px 1fr;gap:12px;margin-bottom:18px;align-items:start}.lib-field label{font-size:13px;color:#4b5563}.lib-field input,.lib-field textarea,.lib-field select{width:100%;border:1px solid #d9dee7;border-radius:4px;padding:9px}.lib-field textarea{min-height:90px;resize:vertical}.lib-drawer-foot{padding:14px 22px;border-top:1px solid #eee;text-align:right}
-.free-form-page{display:none;background:#fff;min-height:760px;padding:24px 34px 90px}
-.free-form-head{display:flex;align-items:center;gap:14px;border-bottom:1px solid #edf0f3;padding-bottom:18px;margin-bottom:24px}
-.free-form-head h2{font-size:19px;margin:0}.free-form-head .btn:last-child{margin-left:auto}
-.free-form-name{display:flex;align-items:center;gap:16px;margin-bottom:28px}.free-form-name input{width:420px}
-.free-goal-card{border:1px solid #dfe5ee;border-radius:8px;margin-bottom:16px;overflow:hidden}
-.free-goal-card header{display:flex;align-items:center;justify-content:space-between;background:#f7f9fc;padding:13px 18px;font-weight:600}
-.free-goal-card header button{border:0;background:none;color:#6b7280;cursor:pointer}
-.free-goal-fields{padding:10px 22px 18px;display:grid;grid-template-columns:140px minmax(0,720px);gap:14px 16px;align-items:start}
+.free-form-page{display:none;background:#f4f6f9;min-height:calc(100vh - 92px);padding:0 0 65px}
+.free-form-head{padding:15px 22px;color:#6b7280;font-size:13px}
+.free-form-head button{border:0;background:none;color:#1677ff;cursor:pointer;padding:0;font:inherit}
+.free-form-main{background:#fff;margin:0 16px;padding:28px 22px 40px;min-height:720px}
+.free-form-main h2{font-size:16px;font-weight:600;margin:0 0 22px}
+.free-form-name{display:grid;grid-template-columns:100px minmax(0,1fr);align-items:center;gap:16px;margin-bottom:28px}.free-form-name label{text-align:right}.free-form-name input{width:500px;max-width:100%}
+.free-goal-card{border:1px solid #e1e5eb;border-radius:2px;margin-bottom:18px;overflow:hidden;background:#fff}
+.free-goal-card header{display:flex;align-items:center;justify-content:space-between;background:#f4f6f9;padding:13px 16px;font-weight:500}
+.free-goal-card header button{border:0;background:none;color:#86909c;cursor:pointer;font-size:15px}
+.free-goal-fields{padding:28px 22px 30px;display:grid;grid-template-columns:100px minmax(0,650px);gap:20px 16px;align-items:start}
 .free-goal-fields label{text-align:right;padding-top:9px;color:#4e5969}.free-goal-fields label.required:before{content:'*';color:#f53f3f;margin-right:4px}
-.free-goal-fields textarea{width:100%;min-height:78px;border:1px solid #d8dce3;border-radius:4px;padding:9px 11px;resize:vertical;font:inherit}
-.free-goal-fields textarea.invalid,.free-goal-fields select.invalid{border-color:#f53f3f}
-.free-goal-fields .counter{font-size:12px;color:#8a94a0;text-align:right;margin-top:4px}
+.free-goal-fields textarea{width:100%;min-height:82px;border:1px solid #d8dce3;border-radius:3px;padding:9px 11px 28px;resize:vertical;font:inherit}
+.free-goal-fields textarea.invalid,.free-goal-fields select.invalid,.free-goal-fields input.invalid{border-color:#f53f3f}
+.free-text-control{position:relative}.free-goal-fields .counter{position:absolute;right:10px;bottom:9px;font-size:12px;color:#a2aab5}
 .free-goal-fields .field-tip{font-size:12px;color:#86909c;margin-top:5px}
 .free-goal-fields select,.free-goal-fields input{height:34px;border:1px solid #d8dce3;border-radius:4px;padding:0 9px;background:#fff}
-.free-add-goal{border:1px dashed #8db8ff;background:#f8fbff;color:#1677ff;border-radius:5px;width:100%;padding:13px;cursor:pointer}
+.free-add-goal{border:1px solid #1677ff;background:#fff;color:#1677ff;border-radius:3px;padding:7px 16px;cursor:pointer}
+.free-form-footer{position:sticky;bottom:0;height:62px;display:flex;align-items:center;justify-content:center;gap:16px;background:#fff;border-top:1px solid #edf0f3;z-index:5;margin-top:-62px}
+.free-form-footer .btn{min-width:68px}
 .pl-user-detail{padding:4px 0 20px}.pl-back-link{color:#1677ff;cursor:pointer;border:0;background:none;padding:0 0 16px}
 .pl-user-detail .pl-radar{margin:20px auto}
 </style>
@@ -619,10 +623,14 @@ button,input,textarea,select{font:inherit}button{cursor:pointer}
 
     <div id="editorPanel" class="panel" style="display:none">
       <div id="freeFormPage" class="free-form-page">
-        <div class="free-form-head"><button class="btn link" onclick="backList()">返回模板列表</button><h2>新建自由对话模板</h2><span class="mode-mini free">自由对话</span><button class="btn primary" onclick="saveTemplate()">保存模板</button></div>
-        <div class="free-form-name"><label>模板名称 <span style="color:#f53f3f">*</span></label><input id="freeTemplateName" class="input" maxlength="50" placeholder="请输入模板名称，例如：门店顾客需求沟通"></div>
-        <div class="pl-section-h">对话目标</div><p class="help">按销售过程添加目标。AI根据学员表达推进对话，每个目标可以进行多轮沟通。</p>
-        <div id="freeGoalCards"></div><button class="free-add-goal" onclick="addFreeGoal()">＋ 添加目标</button>
+        <div class="free-form-head"><button onclick="backList()">陪练模板</button>　›　<span id="freeBreadcrumb">新建模板</span></div>
+        <div class="free-form-main">
+          <h2>模板信息</h2>
+          <div class="free-form-name"><label><span style="color:#f53f3f">*</span> 模板名称</label><input id="freeTemplateName" class="input" maxlength="50" placeholder="请输入模板名称，例如：门店顾客需求沟通"></div>
+          <h2>对话目标 <span class="help" style="font-weight:400;margin-left:8px">AI根据学员表达推进对话，每个目标可以进行多轮沟通</span></h2>
+          <div id="freeGoalCards"></div><button class="free-add-goal" onclick="addFreeGoal()">＋ 添加目标</button>
+        </div>
+        <div class="free-form-footer"><button class="btn" onclick="backList()">取消</button><button class="btn primary" onclick="saveTemplate()">保存</button></div>
       </div>
       <div class="editor">
         <section class="workarea">
@@ -1097,6 +1105,8 @@ function backList(){
 
 function switchMode(m){
   mode=m;
+  const freeBreadcrumb=document.getElementById('freeBreadcrumb');
+  if(freeBreadcrumb)freeBreadcrumb.textContent=editingTemplateRecordId?'编辑模板':'新建模板';
   const freePage=document.getElementById('freeFormPage');
   const treeEditor=document.querySelector('#editorPanel .editor');
   if(freePage)freePage.style.display=m==='free'?'block':'none';
@@ -1120,7 +1130,7 @@ function switchMode(m){
   if(m==='free')renderFreeGoalCards();
 }
 function freeGoalField(goalId,id,key,value,max,placeholder,tip){
-  return `<div><textarea id="${id}" maxlength="${max}" placeholder="${esc(placeholder)}" oninput="updateFreeGoal(${goalId},'${key}','${id}')">${esc(value||'')}</textarea><div class="counter">${[...String(value||'')].length}/${max}字</div>${tip?`<div class="field-tip">${esc(tip)}</div>`:''}</div>`;
+  return `<div><div class="free-text-control"><textarea id="${id}" maxlength="${max}" placeholder="${esc(placeholder)}" oninput="updateFreeGoal(${goalId},'${key}','${id}')">${esc(value||'')}</textarea><div class="counter">${[...String(value||'')].length}/${max}</div></div>${tip?`<div class="field-tip">${esc(tip)}</div>`:''}</div>`;
 }
 function renderFreeGoalCards(){
   const host=document.getElementById('freeGoalCards');if(!host)return;
@@ -1135,7 +1145,7 @@ function updateFreeGoal(id,key,inputId){
   const n=nodes.find(x=>x.id===id),el=document.getElementById(inputId);if(!n||!el)return;
   n[key]=key==='goalRounds'?(el.value===''?0:Number(el.value)):el.value;
   el.classList.remove('invalid');
-  const counter=el.parentElement.querySelector('.counter');if(counter)counter.textContent=`${[...el.value].length}/${el.maxLength}字`;
+  const counter=el.parentElement.querySelector('.counter');if(counter)counter.textContent=`${[...el.value].length}/${el.maxLength}`;
 }
 function addFreeGoal(){
   const parentId=nodes.length?nodes[nodes.length-1].id:null;
