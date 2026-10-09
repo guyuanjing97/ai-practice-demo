@@ -486,7 +486,9 @@ button,input,textarea,select{font:inherit}button{cursor:pointer}
 .free-form-name{display:grid;grid-template-columns:100px minmax(0,1fr);align-items:center;gap:16px;margin-bottom:28px}.free-form-name label{text-align:right}.free-form-name input{width:500px;max-width:100%}
 .free-goal-card{border:1px solid #e1e5eb;border-radius:2px;margin-bottom:18px;overflow:hidden;background:#fff}
 .free-goal-card header{display:flex;align-items:center;justify-content:space-between;background:#f4f6f9;padding:13px 16px;font-weight:500}
-.free-goal-card header button{border:0;background:none;color:#86909c;cursor:pointer;font-size:15px}
+.free-goal-card header button{border:0;background:none;color:#86909c;cursor:pointer;width:28px;height:28px;display:inline-flex;align-items:center;justify-content:center;padding:0}
+.free-goal-card header button:hover{color:#f53f3f}
+.free-goal-card header button svg{width:16px;height:16px;stroke:currentColor;fill:none;stroke-width:1.7;stroke-linecap:round;stroke-linejoin:round}
 .free-goal-fields{padding:28px 22px 30px;display:grid;grid-template-columns:100px minmax(0,650px);gap:20px 16px;align-items:start}
 .free-goal-fields label{text-align:right;padding-top:9px;color:#4e5969}.free-goal-fields label.required:before{content:'*';color:#f53f3f;margin-right:4px}
 .free-goal-fields textarea{width:100%;min-height:82px;border:1px solid #d8dce3;border-radius:3px;padding:9px 11px 28px;resize:vertical;font:inherit}
@@ -494,8 +496,8 @@ button,input,textarea,select{font:inherit}button{cursor:pointer}
 .free-text-control{position:relative}.free-goal-fields .counter{position:absolute;right:10px;bottom:9px;font-size:12px;color:#a2aab5}
 .free-goal-fields .field-tip{font-size:12px;color:#86909c;margin-top:5px}
 .free-goal-fields select,.free-goal-fields input{height:34px;border:1px solid #d8dce3;border-radius:4px;padding:0 9px;background:#fff}
-.free-add-goal{border:1px solid #1677ff;background:#fff;color:#1677ff;border-radius:3px;padding:7px 16px;cursor:pointer}
-.free-form-footer{position:sticky;bottom:0;height:62px;display:flex;align-items:center;justify-content:center;gap:16px;background:#fff;border-top:1px solid #edf0f3;z-index:5;margin-top:-62px}
+.free-add-goal{display:inline-flex;align-items:center;border:1px solid #1677ff;background:#fff;color:#1677ff;border-radius:3px;padding:7px 16px;margin-bottom:14px;cursor:pointer}
+.free-form-footer{position:sticky;bottom:0;height:62px;display:flex;align-items:center;justify-content:center;gap:16px;background:#fff;border-top:1px solid #edf0f3;z-index:5}
 .free-form-footer .btn{min-width:68px}
 .pl-user-detail{padding:4px 0 20px}.pl-back-link{color:#1677ff;cursor:pointer;border:0;background:none;padding:0 0 16px}
 .pl-user-detail .pl-radar{margin:20px auto}
@@ -1134,7 +1136,7 @@ function freeGoalField(goalId,id,key,value,max,placeholder,tip){
 }
 function renderFreeGoalCards(){
   const host=document.getElementById('freeGoalCards');if(!host)return;
-  host.innerHTML=nodes.map((n,i)=>`<section class="free-goal-card" data-goal-id="${n.id}"><header><span>目标${i+1}</span><button onclick="removeFreeGoal(${n.id})" ${nodes.length===1?'disabled':''}>删除目标</button></header><div class="free-goal-fields">
+  host.innerHTML=nodes.map((n,i)=>`<section class="free-goal-card" data-goal-id="${n.id}"><header><span>目标${i+1}</span><button type="button" onclick="removeFreeGoal(${n.id})" aria-label="删除目标${i+1}" title="删除目标${i+1}"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 7h16M10 4h4M6 7l1 13h10l1-13M10 11v6M14 11v6"/></svg></button></header><div class="free-goal-fields">
     <label class="required">AI目标</label>${freeGoalField(n.id,'freeAi'+n.id,'aiGoal',n.aiGoal,100,'例如：作为到店顾客，先表达想了解一款家用车；在销售追问后逐步说明预算和用途。','填写AI扮演的客户想做什么、何时透露信息，以及该如何回应学员。')}
     <label class="required">学员目标</label>${freeGoalField(n.id,'freeLearner'+n.id,'learnerGoal',n.learnerGoal,100,'例如：主动询问购车用途和预算，确认家庭乘坐人数，再推荐合适车型。','填写学员在这一阶段需要完成的沟通任务，便于判断是否达成。')}
     <label>对话思路</label>${freeGoalField(n.id,'freeIdea'+n.id,'idea',n.idea,500,'例如：顾客起初只说想看看家用车；若学员询问用车场景，再补充日常通勤和周末家庭出行。','描述AI如何随学员提问逐步推进对话，可补充追问与异议。')}
@@ -1153,7 +1155,6 @@ function addFreeGoal(){
   renderFreeGoalCards();
 }
 function removeFreeGoal(id){
-  if(nodes.length===1)return;
   nodes=nodes.filter(n=>n.id!==id);
   nodes.forEach((n,i)=>n.parentId=i?nodes[i-1].id:null);
   renderFreeGoalCards();
