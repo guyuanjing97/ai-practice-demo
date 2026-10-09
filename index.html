@@ -631,12 +631,12 @@ button,input,textarea,select{font:inherit}button{cursor:pointer}
             <div id="nodeInspector" style="display:none">
               <div id="freeGoalBlock" class="free-section">
                 <div class="section-head">自由对话目标 <span id="currentGoalIndex" class="goal-index-badge">目标1</span></div>
-                <div id="fieldAiGoal" class="field"><div class="label req">AI任务目标</div><textarea id="aiGoal" class="textarea" oninput="clearNodeFieldError('fieldAiGoal')"></textarea><div class="field-error">AI任务目标不能为空</div></div>
-                <div id="fieldLearnerGoal" class="field"><div class="label req">学员任务目标</div><textarea id="learnerGoal" class="textarea" oninput="clearNodeFieldError('fieldLearnerGoal')"></textarea><div class="help">AI 将基于该目标判断当前节点是否完成；完成后才进入下一节点。</div><div class="field-error">学员任务目标不能为空</div></div>
+                <div id="fieldAiGoal" class="field"><div class="label req">AI目标</div><textarea id="aiGoal" class="textarea" oninput="clearNodeFieldError('fieldAiGoal')"></textarea><div class="field-error">AI目标不能为空</div></div>
+                <div id="fieldLearnerGoal" class="field"><div class="label req">学员目标</div><textarea id="learnerGoal" class="textarea" oninput="clearNodeFieldError('fieldLearnerGoal')"></textarea><div class="help">AI 将基于该目标判断当前节点是否完成；完成后才进入下一节点。</div><div class="field-error">学员目标不能为空</div></div>
                 <div class="field"><div class="label">对话思路</div><textarea id="dialogueIdea" class="textarea"></textarea><div class="help">该内容会作为自由模式大模型 Prompt 的参考，用于限制 AI 在当前目标中的对话方式。</div></div>
-                <div class="field"><div class="label">目标完成时的激励反馈</div><textarea id="successFeedback" class="textarea" placeholder="请输入目标完成时的反馈文案"></textarea><div class="help">学员完成当前目标时，C 端弹窗展示该文案；不填写时仅展示目标完成状态与操作按钮。</div></div>
-                <div class="field"><div class="label">目标未完成时的提醒</div><textarea id="failFeedback" class="textarea" placeholder="请输入目标未完成时的提醒文案"></textarea><div class="help">达到最大对话轮次仍未完成当前学员任务目标时，C 端弹窗展示该文案；不填写时仅展示目标未完成状态与操作按钮。</div></div>
-                <div id="fieldGoalRounds" class="field"><div class="label req">最大对话轮次</div><div class="inline"><input id="goalRounds" class="input num" type="number" min="1" value="5" oninput="clearNodeFieldError('fieldGoalRounds')"><span>轮</span></div><div class="help">达到最大轮次仍未完成「学员任务目标」时，触发上方的目标未完成提醒。</div><div class="field-error">最大对话轮次不能为空</div></div>
+                <div class="field"><div class="label">目标完成时的激励反馈</div><textarea id="successFeedback" class="textarea" placeholder="请输入目标完成时的反馈文案"></textarea><div class="help">学员完成当前目标时，在该轮对话下方展示目标已完成提醒及该文案。</div></div>
+                <div class="field"><div class="label">目标未完成时的提醒</div><textarea id="failFeedback" class="textarea" placeholder="请输入目标未完成时的提醒文案"></textarea><div class="help">达到最大对话轮次仍未完成当前学员目标时，在该轮对话下方展示目标未完成提醒及该文案。</div></div>
+                <div id="fieldGoalRounds" class="field"><div class="label req">最大对话轮次</div><div class="inline"><input id="goalRounds" class="input num" type="number" min="1" value="5" oninput="clearNodeFieldError('fieldGoalRounds')"><span>轮</span></div><div class="help">达到最大轮次仍未完成「学员目标」时，触发上方的目标未完成提醒。</div><div class="field-error">最大对话轮次不能为空</div></div>
               </div>
 
               <div class="section-block qa-section">
@@ -701,14 +701,14 @@ button,input,textarea,select{font:inherit}button{cursor:pointer}
 
   <aside class="c2-side">
     <h3>B / C 联动预览</h3>
-    <p>切换到 C 端时，会读取当前 B 端已保存的陪练计划与陪练模板配置。自由对话仅进入考核模式；目标完成/未完成共用同一套结果弹窗。</p>
+    <p>切换到 C 端时，会读取当前 B 端已保存的陪练计划与陪练模板配置。自由对话仅进入考核模式；目标完成/未完成会在该轮对话下方生成信息提醒，并继续下一目标。</p>
     <div class="c2-sync"><b>当前陪练计划</b><div id="c2SyncPlan">—</div></div>
     <div class="c2-sync"><b>关联模板</b><div id="c2SyncTemplate">—</div></div>
     <div class="c2-sync"><b>当前目标配置</b><div id="c2SyncGoal">—</div></div>
     <button class="c2-ctrl" onclick="c2Reset()">重新开始 C端体验</button>
     <button class="c2-ctrl" onclick="c2ToggleScript()">查看 / 关闭标准话术</button>
     <button class="c2-ctrl" onclick="c2Answer()">模拟学员回答</button>
-    <button class="c2-ctrl" onclick="c2ShowFail()">模拟目标未完成弹窗</button>
+    <button class="c2-ctrl" onclick="c2ShowFail()">模拟目标未完成提醒</button>
     <button class="c2-ctrl" onclick="c2ShowReport()">查看评分报告</button>
   </aside>
 </div>
@@ -1069,6 +1069,11 @@ function switchMode(m){
     badge.className='mode-mini '+(m==='free'?'free':'fixed');
   }
   document.getElementById('freeGoalBlock').style.display=m==='free'?'block':'none';
+  const qaSection=document.querySelector('.qa-section');
+  const branchField=document.getElementById('fieldBranchBase');
+  if(m==='free')document.getElementById('freeGoalBlock').appendChild(branchField);
+  else qaSection.appendChild(branchField);
+  qaSection.style.display=m==='free'?'none':'block';
   renderTree();
   if(selectedId!==null)selectNode(selectedId);else updateInspector();
 }
@@ -1106,7 +1111,7 @@ function renderTree(){
   function drawPath(x1,y1,x2,y2){const mid=(y1+y2)/2,p=document.createElementNS('http://www.w3.org/2000/svg','path');p.setAttribute('d',`M ${x1} ${y1} C ${x1} ${mid}, ${x2} ${mid}, ${x2} ${y2}`);p.setAttribute('fill','none');p.setAttribute('stroke',mode==='free'?'#9d8ee8':'#3f4853');p.setAttribute('stroke-width','1.7');if(mode==='free')p.setAttribute('stroke-dasharray','7 7');svg.appendChild(p);const a=document.createElementNS('http://www.w3.org/2000/svg','path');a.setAttribute('d',`M ${x2-4} ${y2-7} L ${x2} ${y2} L ${x2+4} ${y2-7}`);a.setAttribute('fill','none');a.setAttribute('stroke',mode==='free'?'#9d8ee8':'#3f4853');a.setAttribute('stroke-width','1.7');svg.appendChild(a)}
   roots.forEach(r=>pos[r.id]&&drawPath(canvasW/2,114,pos[r.id].x+100,pos[r.id].y));
   nodes.forEach(n=>{const p=pos[n.id];if(!p)return;childrenOf(n.id).forEach(c=>{const cp=pos[c.id];drawPath(p.x+100,p.y+94,cp.x+100,cp.y)})});
-  nodes.forEach(n=>{const p=pos[n.id];if(!p)return;const el=document.createElement('div');el.className='tree-node'+(mode==='free'?' free':'')+(selectedId===n.id?' active':'');el.style.left=p.x+'px';el.style.top=p.y+'px';el.onclick=()=>selectNode(n.id);const has=n.q||n.a;const nodeTitle=mode==='free'?`问答 <span class="goal-node-index">目标${goalIndexOf(n.id)}</span>`:'问答';el.innerHTML=`<div class="head"><span>${nodeTitle}</span><button class="node-delete" onclick="event.stopPropagation();deleteNode(${n.id})">×</button></div><div class="body ${has?'':'empty'}">${has?`问题：${esc(n.q||'')}<br>话术：${esc(n.a||'')}`:'点击编辑节点内容'}</div>`;wrap.appendChild(el);const plus=document.createElement('button');plus.className='plus'+(mode==='free'?' free':'');plus.style.left=(p.x+88)+'px';plus.style.top=(p.y+102)+'px';plus.textContent='+';plus.onclick=e=>{e.stopPropagation();addChild(n.id)};wrap.appendChild(plus)});
+  nodes.forEach(n=>{const p=pos[n.id];if(!p)return;const el=document.createElement('div');el.className='tree-node'+(mode==='free'?' free':'')+(selectedId===n.id?' active':'');el.style.left=p.x+'px';el.style.top=p.y+'px';el.onclick=()=>selectNode(n.id);const has=mode==='free'?(n.aiGoal||n.learnerGoal):(n.q||n.a);const nodeTitle=mode==='free'?`目标 <span class="goal-node-index">目标${goalIndexOf(n.id)}</span>`:'问答';el.innerHTML=`<div class="head"><span>${nodeTitle}</span><button class="node-delete" onclick="event.stopPropagation();deleteNode(${n.id})">×</button></div><div class="body ${has?'':'empty'}">${has?(mode==='free'?`AI目标：${esc(n.aiGoal||'')}<br>学员目标：${esc(n.learnerGoal||'')}`:`问题：${esc(n.q||'')}<br>话术：${esc(n.a||'')}`):'点击编辑节点内容'}</div>`;wrap.appendChild(el);const plus=document.createElement('button');plus.className='plus'+(mode==='free'?' free':'');plus.style.left=(p.x+88)+'px';plus.style.top=(p.y+102)+'px';plus.textContent='+';plus.onclick=e=>{e.stopPropagation();addChild(n.id)};wrap.appendChild(plus)});
   canvas.style.minHeight=Math.max(760,...Object.values(pos).map(p=>p.y+170))+'px';updateInspector();
 }
 
@@ -1124,11 +1129,8 @@ function markNodeFieldError(id){document.getElementById(id)?.classList.add('inva
 function validateCurrentNode(){
   document.querySelectorAll('#nodeInspector .field.invalid').forEach(x=>x.classList.remove('invalid'));
   let ok=true;
-  const required=[
-    ['question','fieldQuestion'],
-    ['answer','fieldAnswer'],
-    ['branchBase','fieldBranchBase']
-  ];
+  const required=[['branchBase','fieldBranchBase']];
+  if(mode!=='free')required.push(['question','fieldQuestion'],['answer','fieldAnswer']);
   if(mode==='free'){
     required.unshift(['aiGoal','fieldAiGoal'],['learnerGoal','fieldLearnerGoal']);
     required.push(['goalRounds','fieldGoalRounds']);
@@ -1147,8 +1149,10 @@ function validateCurrentNode(){
 function saveCurrent(){
   const n=current();if(!n)return;
   if(!validateCurrentNode())return;
-  n.q=document.getElementById('question').value.trim();
-  n.a=document.getElementById('answer').value.trim();
+  if(mode!=='free'){
+    n.q=document.getElementById('question').value.trim();
+    n.a=document.getElementById('answer').value.trim();
+  }
   n.branchBase=Math.max(0,Number(document.getElementById('branchBase').value)||0);
   if(mode==='free'){
     n.aiGoal=document.getElementById('aiGoal').value.trim();
@@ -1356,9 +1360,9 @@ function freeGoalShareHtml(templateId,scope='create',savedWeights,savedGoalIndex
   const handler=`oninput="updateGoalShareTotal('${scope}')"`;
   const rows=goals.map((g,i)=>`<div class="pl-goal-row" data-goal-index="${g.index}"><div><span class="pl-goal-index">${g.index}</span></div><div><div class="pl-goal-name">${esc(g.text)}</div></div><div><input class="pl-goal-w ${cls}" type="number" min="0" max="100" value="${weights[i]??0}" ${handler}> %</div><div><button type="button" class="pl-goal-remove" onclick="removeGoalScoreRow(this,'${scope}')">删除</button></div></div>`).join('');
   return `<div class="pl-goals" data-scope="${scope}">
-    <div class="pl-goal-head"><div>序号</div><div>学员任务目标</div><div>目标占比</div><div>操作</div></div>${rows||'<div class="pl-goal-empty">暂无参与评分的目标</div>'}
+    <div class="pl-goal-head"><div>序号</div><div>学员目标</div><div>目标占比</div><div>操作</div></div>${rows||'<div class="pl-goal-empty">暂无参与评分的目标</div>'}
   </div>
-  <div class="pl-goal-tools"><span class="help">目标自动读取自陪练模板中的「学员任务目标」，可删除不参与评分的目标</span><span id="${totalId}" class="sum ${goals.length?'ok':'bad'}">目标占比合计：${goals.length?100:0}%</span></div>
+  <div class="pl-goal-tools"><span class="help">目标自动读取自陪练模板中的「学员目标」，可删除不参与评分的目标</span><span id="${totalId}" class="sum ${goals.length?'ok':'bad'}">目标占比合计：${goals.length?100:0}%</span></div>
   <div class="pl-info">参与评分目标的占比之和必须等于100%。目标达成度得分按“已完成参与评分目标对应占比之和”计算；支持删减目标，不支持新增目标评分项。</div>`;
 }
 function removeGoalScoreRow(btn,scope='create'){
@@ -1639,7 +1643,7 @@ function c2SyncSide(){
   const a=document.getElementById('c2SyncPlan'),b=document.getElementById('c2SyncTemplate'),c=document.getElementById('c2SyncGoal');
   if(a)a.innerHTML=`${esc(p.name||'—')}<br><span class="help">${esc(p.completionStandard||'')}</span>`;
   if(b)b.innerHTML=`${esc(t.name||'—')} · ${t.mode==='free'?'自由对话':'固定对话'}`;
-  if(c)c.innerHTML=n?`目标${c2State.goalIndex+1}：${esc(n.learnerGoal||'未配置学员任务目标')}<br>最大对话轮次：${n.goalRounds||'-'}轮`:'—';
+  if(c)c.innerHTML=n?`目标${c2State.goalIndex+1}：${esc(n.learnerGoal||'未配置学员目标')}<br>最大对话轮次：${n.goalRounds||'-'}轮`:'—';
 }
 function c2Pct(){return c2State.nodes.length?Math.round(c2State.goalIndex/c2State.nodes.length*100):0}
 function c2Node(){return c2State.nodes[c2State.goalIndex]||null}
@@ -1675,7 +1679,7 @@ function c2FeedbackHtml(turn){
   return `<div class="c2-feedback">
     <div class="c2-feedback-title">✦ 改进建议</div>
     <h4>✓ 做得好的部分：</h4><p>${complete?'本轮回答已经覆盖了当前目标的主要要求。':'已经开始围绕当前目标推进对话，方向正确。'}</p>
-    <h4>↗ 有待提升的部分：</h4><p>${complete?'可以继续保持自然、简洁的沟通节奏。':`当前还没有完整覆盖：${esc(n.learnerGoal||'本轮学员任务目标')}`}</p>
+    <h4>↗ 有待提升的部分：</h4><p>${complete?'可以继续保持自然、简洁的沟通节奏。':`当前还没有完整覆盖：${esc(n.learnerGoal||'本轮学员目标')}`}</p>
     <h4>✦ 改进建议：</h4><p>${complete?'等待顾客回应后自然进入下一阶段。':'结合顾客刚刚的回答继续追问缺失信息，不需要一次提出多个问题。'}</p>
     <h4>☷ 参考话术：</h4><p>${esc(n.a||'暂无标准话术')}</p>
   </div>`;
@@ -1685,12 +1689,12 @@ function c2TurnHtml(t){
     const cls=t.status==='failed'?'failed':'done';
     if(t.status==='failed'){
       return `<div class="c2-goal-transition"><div class="inner failed">
-        <div class="notice-title">⚠ 当前目标未完成</div>
+        <div class="notice-title">${esc(t.text||'⚠ 当前目标未完成')}</div>
         ${t.reason?`<div class="notice-reason">${esc(t.reason)}</div>`:''}
         <div class="notice-next">${esc(t.nextText||'即将进入下一目标')}</div>
       </div></div>`;
     }
-    return `<div class="c2-goal-transition"><div class="inner ${cls}">${esc(t.text)}</div></div>`;
+    return `<div class="c2-goal-transition"><div class="inner ${cls}"><div class="notice-title">${esc(t.text)}</div>${t.reason?`<div class="notice-reason">${esc(t.reason)}</div>`:''}${t.nextText?`<div class="notice-next">${esc(t.nextText)}</div>`:''}</div></div>`;
   }
   return `<div class="c2-msg"><div class="c2-audio">▥ <span>12″</span></div><div class="c2-transcript">${esc(t.customer)}</div></div>
   <div class="c2-msg me" style="max-width:100%;margin-left:0"><div class="c2-answer-card"><div class="c2-answer-voice"><div class="c2-answer-pill"><span>8″</span>▥</div></div><div class="c2-transcript">${esc(t.answer)}</div>${c2FeedbackHtml(t)}</div></div>`;
@@ -1755,7 +1759,7 @@ function c2PracticeHtml(){
     <div class="c2-progress"><b>练习进度</b><div class="c2-track"><i style="width:${pct}%"></i></div><span class="c2-pct">${pct}%</span></div>
     <div class="c2-scene"><details><summary>练习场景</summary><p>${esc(c2State.plan.intro||'AI陪练场景')}</p></details></div>
     <div class="c2-scroll" id="c2ChatScroll"><div class="c2-chat">${c2State.turns.map(c2TurnHtml).join('')}
-      ${!isDone?`<div class="c2-msg"><div class="c2-audio">▥ <span>12″</span></div><div class="c2-transcript">${esc(customer)}</div></div>`:`<div class="demo-box" style="text-align:center">本次练习目标已全部完成。</div>`}
+      ${!isDone?`<div class="c2-msg"><div class="c2-audio">▥ <span>12″</span></div><div class="c2-transcript">${esc(customer)}</div></div>`:`<div class="demo-box" style="text-align:center">本次对话已结束，请查看目标完成情况。</div>`}
     </div></div>
     ${c2State.scriptOpen&&!c2State.realMode&&n?`<div class="c2-script"><h3><span>💡 标准话术</span><button onclick="c2ToggleScript()">×</button></h3><small>当前目标：目标${c2State.goalIndex+1} ${esc(n.learnerGoal||'')}</small><p>${esc(n.a||'暂无标准话术')}</p><small>回答前可查看 · 仅供参考</small></div>`:''}
     <div class="c2-tools"><div class="c2-toolrow">
@@ -1763,7 +1767,7 @@ function c2PracticeHtml(){
       <button class="c2-record" onclick="${isDone?'c2FinishSession()':'c2Answer()'}">${isDone?'查看本次结果':'🎙 按住说话'}</button>
       ${!c2State.realMode?`<button class="c2-aux ${c2State.feedbackOn?'on':''}" onclick="c2State.feedbackOn=!c2State.feedbackOn;c2Render()"><span class="ico">🅰</span>改进建议</button>`:''}
     </div><div class="c2-disclaimer">内容由AI生成，仅供参考</div></div>
-    ${c2State.goalModal?c2GoalModalHtml():''}${c2State.failOpen?c2GoalResultHtml():''}${c2State.endOpen?c2EndHtml():''}${c2State.reportOpen?c2ReportHtml():''}${c2State.toast?`<div class="c2-toast">${esc(c2State.toast)}</div>`:''}`;
+    ${c2State.goalModal?c2GoalModalHtml():''}${c2State.endOpen?c2EndHtml():''}${c2State.reportOpen?c2ReportHtml():''}${c2State.toast?`<div class="c2-toast">${esc(c2State.toast)}</div>`:''}`;
 }
 function c2GoalModalHtml(){
   const standard=c2State.plan.completionStandard||'暂未设置完成标准';
@@ -1898,8 +1902,8 @@ function c2Answer(){
     if(c2State.goalIndex<c2State.nodes.length)c2State.goalStatuses[c2State.goalIndex]='current';
     c2State.scrollIntent='bottom';c2Render();return;
   }
-  if(complete){c2State.goalStatuses[c2State.goalIndex]='done';c2State.goalResultType='success';c2State.failOpen=true;c2State.scrollIntent='preserve';c2Render();}
-  else if(c2State.round>=(n.goalRounds||3)){c2State.goalResultType='incomplete';c2State.failOpen=true;c2State.scrollIntent='preserve';c2Render();}
+  if(complete)c2CompleteGoalInline(true);
+  else if(c2State.round>=(n.goalRounds||3))c2CompleteGoalInline(false);
   else{c2State.toast='当前目标尚未完成，继续围绕本目标对话';c2State.scrollIntent='bottom';c2Render();setTimeout(()=>{c2State.toast='';c2State.scrollIntent='preserve';c2Render()},1600);}
 }
 function c2GoalResultHtml(){
@@ -1918,6 +1922,18 @@ function c2GoalResultHtml(){
       ?`<button class="c2-modal-btn" onclick="c2AdvanceCompletedGoal()">${isLast?'完成本次考核':'进入下一个目标'}</button>`
       :`<button class="c2-modal-btn" onclick="c2RetryGoal()">重新演练本目标</button><button class="c2-modal-btn secondary" onclick="c2SkipFailedGoal()">${isLast?'结束本次考核':'继续下一个目标演练'}</button>`}
   </div></div>`;
+}
+function c2CompleteGoalInline(success){
+  const goalIndex=c2State.goalIndex,n=c2Node();if(!n)return;
+  c2State.failOpen=false;
+  c2State.goalStatuses[goalIndex]=success?'done':'failed';
+  c2State.turns.push({type:'transition',status:success?'done':'failed',
+    text:`${success?'✓':'⚠'} 目标${goalIndex+1}${success?'已完成':'未完成'}`,
+    reason:(success?n.successFeedback:n.failFeedback)||'',
+    nextText:goalIndex<c2State.nodes.length-1?`已进入目标${goalIndex+2}`:'本次对话已结束，可查看本次结果'});
+  c2State.goalIndex++;c2State.round=0;
+  if(c2Node())c2State.goalStatuses[c2State.goalIndex]='current';
+  c2State.scrollIntent='bottom';c2Render();
 }
 function c2AdvanceCompletedGoal(){
   const doneIdx=c2State.goalIndex;
@@ -1978,8 +1994,7 @@ function c2ShowFail(){
   const n=c2Node();if(!n)return;
   c2State.round=n.goalRounds||3;
   c2State.goalResultType='incomplete';
-  c2State.failOpen=true;
-  c2Render();
+  c2CompleteGoalInline(false);
 }
 function c2FinishSession(){c2State.endOpen=false;c2State.screen='result';c2State.reportOpen=false;c2Render()}
 function c2ShowReport(){
