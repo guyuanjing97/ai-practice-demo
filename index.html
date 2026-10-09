@@ -946,7 +946,7 @@ function saveTemplate(){
   if(nodes.length===0){showAdminToast('请至少新增一个目标或问答节点','error');return}
   const missingNode=nodes.find(n=>{
     if(mode==='free'){
-      return !(n.aiGoal||'').trim()||!(n.learnerGoal||'').trim()||!Number.isInteger(Number(n.goalRounds))||Number(n.goalRounds)<1||n.branchBase===null||n.branchBase===undefined;
+      return !(n.aiGoal||'').trim()||!(n.learnerGoal||'').trim()||!Number.isInteger(Number(n.goalRounds))||Number(n.goalRounds)<1;
     }
     return !(n.q||'').trim()||!(n.a||'').trim()||n.branchBase===null||n.branchBase===undefined;
   });
@@ -1113,8 +1113,7 @@ function switchMode(m){
   document.getElementById('freeGoalBlock').style.display=m==='free'?'block':'none';
   const qaSection=document.querySelector('.qa-section');
   const branchField=document.getElementById('fieldBranchBase');
-  if(m==='free')document.getElementById('freeGoalBlock').appendChild(branchField);
-  else qaSection.appendChild(branchField);
+  qaSection.appendChild(branchField);
   qaSection.style.display=m==='free'?'none':'block';
   renderTree();
   if(selectedId!==null)selectNode(selectedId);else updateInspector();
@@ -1130,18 +1129,17 @@ function renderFreeGoalCards(){
     <label class="required">学员目标</label>${freeGoalField(n.id,'freeLearner'+n.id,'learnerGoal',n.learnerGoal,100,'例如：主动询问购车用途和预算，确认家庭乘坐人数，再推荐合适车型。','填写学员在这一阶段需要完成的沟通任务，便于判断是否达成。')}
     <label>对话思路</label>${freeGoalField(n.id,'freeIdea'+n.id,'idea',n.idea,500,'例如：顾客起初只说想看看家用车；若学员询问用车场景，再补充日常通勤和周末家庭出行。','描述AI如何随学员提问逐步推进对话，可补充追问与异议。')}
     <label class="required">最大对话轮次</label><div><input id="freeRounds${n.id}" type="number" min="1" step="1" value="${n.goalRounds||''}" placeholder="请输入该目标允许的最多对话轮次" oninput="updateFreeGoal(${n.id},'goalRounds','freeRounds${n.id}')"><span class="help"> 轮</span><div class="field-tip">达到上限后，系统判断这一目标是否完成并进入下一目标。</div></div>
-    <label>分流基数</label><div><input id="freeBranch${n.id}" type="number" min="0" value="${n.branchBase??100}" oninput="updateFreeGoal(${n.id},'branchBase','freeBranch${n.id}')"><div class="field-tip">多个分支并列时，按各分支基数的占比流转。</div></div>
   </div></section>`).join('');
 }
 function updateFreeGoal(id,key,inputId){
   const n=nodes.find(x=>x.id===id),el=document.getElementById(inputId);if(!n||!el)return;
-  n[key]=['goalRounds','branchBase'].includes(key)?(el.value===''?0:Number(el.value)):el.value;
+  n[key]=key==='goalRounds'?(el.value===''?0:Number(el.value)):el.value;
   el.classList.remove('invalid');
   const counter=el.parentElement.querySelector('.counter');if(counter)counter.textContent=`${[...el.value].length}/${el.maxLength}字`;
 }
 function addFreeGoal(){
   const parentId=nodes.length?nodes[nodes.length-1].id:null;
-  nodes.push({id:nextId++,parentId,q:'',a:'',keywords:[],branchBase:100,aiGoal:'',learnerGoal:'',idea:'',goalRounds:0,successFeedback:'',failFeedback:''});
+  nodes.push({id:nextId++,parentId,q:'',a:'',keywords:[],aiGoal:'',learnerGoal:'',idea:'',goalRounds:0,successFeedback:'',failFeedback:''});
   renderFreeGoalCards();
 }
 function removeFreeGoal(id){
@@ -1202,7 +1200,7 @@ function markNodeFieldError(id){document.getElementById(id)?.classList.add('inva
 function validateCurrentNode(){
   document.querySelectorAll('#nodeInspector .field.invalid').forEach(x=>x.classList.remove('invalid'));
   let ok=true;
-  const required=[['branchBase','fieldBranchBase']];
+  const required=mode==='free'?[]:[['branchBase','fieldBranchBase']];
   if(mode!=='free')required.push(['question','fieldQuestion'],['answer','fieldAnswer']);
   if(mode==='free'){
     required.unshift(['aiGoal','fieldAiGoal'],['learnerGoal','fieldLearnerGoal']);
